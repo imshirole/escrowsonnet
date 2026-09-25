@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
   'use strict';
 
   /* ── DOM refs for all content views ── */
-  var overviewView         = document.getElementById('vendor-overview-view');
+  var overviewView         = document.getElementById('overview-view');
   var workOrdersView       = document.getElementById('work-orders-view');
   var bulkActionsView      = document.getElementById('bulk-actions-view');
   var proformaInvoicesView = document.getElementById('proforma-invoices-view');
@@ -17,37 +17,22 @@ document.addEventListener('DOMContentLoaded', function () {
   var directLinksView      = document.getElementById('direct-links-view');
   var buyerLookupView      = document.getElementById('buyer-lookup-view');
   var quoteRequestsView    = document.getElementById('quote-requests-view');
-  var analyticsReportsView = document.getElementById('analytics-reports-view');
   var lenderLookupView     = document.getElementById('lender-lookup-view');
   var requestFinancingView = document.getElementById('request-financing-view');
   var repaymentsView       = document.getElementById('repayments-view');
   var fundedRepaymentsView = document.getElementById('funded-repayments-view');
-
-  var allViews = [overviewView, workOrdersView, bulkActionsView, proformaInvoicesView, billPaymentsView, feeSimulatorView, directLinksView, buyerLookupView, quoteRequestsView, analyticsReportsView, lenderLookupView, requestFinancingView, repaymentsView, fundedRepaymentsView];
+  var proofExplorerView    = document.getElementById('proof-explorer-view');
+  var messagesView         = document.getElementById('messages-view');
+  var disputesView         = document.getElementById('disputes-view');
+  var helpCenterView       = document.getElementById('help-center-view');
+  var settingsView         = document.getElementById('settings-view');
 
   /* ── Centralized view switcher ── */
-  function showView(targetViewId) {
-    allViews.forEach(function (view) {
-      if (view) view.classList.add('hidden');
+  function showView(targetId) {
+    document.querySelectorAll('main > div[id$="-view"]').forEach(function (view) {
+      view.classList.add('hidden');
     });
-    var targetMap = {
-      'overview':          overviewView,
-      'work-orders':       workOrdersView,
-      'bulk-actions':      bulkActionsView,
-      'proforma-invoices': proformaInvoicesView,
-      'bill-payments':     billPaymentsView,
-      'fee-simulator':     feeSimulatorView,
-      'direct-links':      directLinksView,
-      'buyer-lookup':      buyerLookupView,
-      'quote-requests':    quoteRequestsView,
-      'analytics-reports': analyticsReportsView,
-      'lender-lookup':     lenderLookupView,
-      'request-financing': requestFinancingView,
-      'repayments':        repaymentsView,
-      'funded-repayments': fundedRepaymentsView
-    };
-    var target = targetMap[targetViewId];
-    if (target) target.classList.remove('hidden');
+    document.getElementById(targetId + '-view')?.classList.remove('hidden');
   }
 
   /* ── Sidebar "Overview" link (inside vendor-submenu-dashboard) ── */
@@ -110,6 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
     directLinksLink.addEventListener('click', function (e) {
       e.preventDefault();
       showView('direct-links');
+      window.location.hash = 'direct-links-view';
     });
   }
 
@@ -122,14 +108,122 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  /* ── Sidebar "Analytics & Report" link (inside vendor-submenu-tools) ── */
-  var analyticsReportsLink = document.querySelector('#vendor-submenu-tools a');
-  if (analyticsReportsLink) {
-    analyticsReportsLink.addEventListener('click', function (e) {
+  /* ── Sidebar "Proof explorer" link (inside vendor-submenu-tools) ── */
+  var proofExplorerLink = document.querySelector('#vendor-submenu-tools a');
+  if (proofExplorerLink) {
+    proofExplorerLink.addEventListener('click', function (e) {
       e.preventDefault();
-      showView('analytics-reports');
+      showView('proof-explorer');
     });
   }
+
+  /* ── Sidebar "Messages" link (inside vendor-submenu-support) ── */
+  var messagesLink = document.querySelector('#vendor-submenu-support a');
+  if (messagesLink) {
+    messagesLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      showView('messages');
+    });
+  }
+
+  /* ── Sidebar "Disputes" link (inside vendor-submenu-support) ── */
+  var disputesLink = document.querySelector('#vendor-submenu-support a:nth-child(2)');
+  if (disputesLink) {
+    disputesLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      showView('disputes');
+    });
+  }
+
+  /* ── Sidebar "Help Center" link (inside vendor-submenu-support) ── */
+  var helpCenterLink = document.querySelector('#vendor-submenu-support a:nth-child(3)');
+  if (helpCenterLink) {
+    helpCenterLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      showView('help-center');
+    });
+  }
+
+  /* ── Sidebar "Settings" link (inside vendor-submenu-account) ── */
+  var settingsLink = document.querySelector('#vendor-submenu-account a');
+  if (settingsLink) {
+    settingsLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      showView('settings');
+    });
+  }
+
+  /* ── Dispute form card toggle ── */
+  var toggleFileDisputeBtn = document.getElementById('toggle-file-dispute-btn');
+  var fileDisputeCard = document.getElementById('file-dispute-card');
+  var cancelDisputeBtn = document.getElementById('cancel-dispute-btn');
+  if (toggleFileDisputeBtn && fileDisputeCard) {
+    toggleFileDisputeBtn.addEventListener('click', function () {
+      fileDisputeCard.classList.toggle('hidden');
+    });
+  }
+  if (cancelDisputeBtn && fileDisputeCard) {
+    cancelDisputeBtn.addEventListener('click', function () {
+      fileDisputeCard.classList.add('hidden');
+    });
+  }
+
+  /* ── Support modal open / close controls ── */
+  var openSupportModalBtn = document.getElementById('open-support-modal-btn');
+  var supportModal = document.getElementById('support-modal');
+  var closeSupportModalBtn = document.getElementById('close-support-modal-btn');
+  var cancelSupportBtn = document.getElementById('cancel-support-btn');
+
+  if (openSupportModalBtn && supportModal) {
+    openSupportModalBtn.addEventListener('click', function () {
+      supportModal.classList.remove('hidden');
+    });
+  }
+
+  function closeSupportModal() {
+    if (supportModal) supportModal.classList.add('hidden');
+  }
+
+  if (closeSupportModalBtn) closeSupportModalBtn.addEventListener('click', closeSupportModal);
+  if (cancelSupportBtn) cancelSupportBtn.addEventListener('click', closeSupportModal);
+  if (supportModal) {
+    supportModal.addEventListener('click', function (e) {
+      if (e.target === supportModal) closeSupportModal();
+    });
+  }
+
+  /* ── Help Center actions and FAQ accordion ── */
+  var helpContactSupportBtn = document.getElementById('help-contact-support-btn');
+  var helpFileDisputeBtn = document.getElementById('help-file-dispute-btn');
+  if (helpContactSupportBtn && supportModal) {
+    helpContactSupportBtn.addEventListener('click', function () {
+      supportModal.classList.remove('hidden');
+    });
+  }
+  if (helpFileDisputeBtn) {
+    helpFileDisputeBtn.addEventListener('click', function () {
+      showView('disputes');
+    });
+  }
+
+  document.querySelectorAll('.help-faq-item').forEach(function (faqItem) {
+    var faqButton = faqItem.querySelector('button');
+    var faqAnswer = faqItem.querySelector('.help-faq-answer');
+    var faqCaret = faqItem.querySelector('.help-faq-caret');
+    if (faqButton && faqAnswer) {
+      faqButton.addEventListener('click', function () {
+        faqAnswer.classList.toggle('hidden');
+        if (faqCaret) faqCaret.classList.toggle('rotate-180');
+      });
+    }
+  });
+
+  /* ── Settings notification and badge switches ── */
+  document.querySelectorAll('.settings-toggle-checkbox').forEach(function (toggle) {
+    toggle.addEventListener('change', function () {
+      toggle.setAttribute('aria-checked', toggle.checked ? 'true' : 'false');
+    });
+  });
 
   /* ── Sidebar "Quote requests" link (inside vendor-submenu-network) ── */
   var quoteRequestsLink = document.querySelector('#vendor-submenu-network a:nth-child(2)');
@@ -297,46 +391,281 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  /* ── Direct Links: Drawer toggle & validation ── */
-  var createNewLinkBtn = document.getElementById('create-new-link-btn');
-  var invoiceDrawer = document.getElementById('invoice-generator-drawer');
-  var invoiceItemDesc = document.getElementById('invoice-item-desc');
-  var invoiceItemPrice = document.getElementById('invoice-item-price');
-  var submitPaymentBtn = document.getElementById('submit-payment-link-generation');
+  /* ── Direct Links: inline buyer type pill toggle ── */
+  var directLinkPartyPills = document.querySelectorAll('.direct-link-party-pill');
+  directLinkPartyPills.forEach(function (pill) {
+    pill.addEventListener('click', function () {
+      directLinkPartyPills.forEach(function (otherPill) {
+        otherPill.classList.remove('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-300', 'font-medium');
+        otherPill.classList.add('border-slate-700', 'text-slate-400');
+        otherPill.setAttribute('aria-pressed', 'false');
+      });
+      pill.classList.remove('border-slate-700', 'text-slate-400');
+      pill.classList.add('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-300', 'font-medium');
+      pill.setAttribute('aria-pressed', 'true');
+    });
+  });
 
-  /* Open drawer on "+ New" click */
-  if (createNewLinkBtn && invoiceDrawer) {
-    createNewLinkBtn.addEventListener('click', function () {
-      invoiceDrawer.classList.remove('hidden');
+  /* ── Direct Links: trade scope and administered contract controls ── */
+  var directLinkScopePills = document.querySelectorAll('.direct-link-scope-pill');
+  directLinkScopePills.forEach(function (pill) {
+    pill.addEventListener('click', function () {
+      directLinkScopePills.forEach(function (otherPill) {
+        otherPill.classList.remove('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-300', 'font-medium');
+        otherPill.classList.add('border-slate-700', 'text-slate-400');
+        otherPill.setAttribute('aria-pressed', 'false');
+      });
+      pill.classList.remove('border-slate-700', 'text-slate-400');
+      pill.classList.add('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-300', 'font-medium');
+      pill.setAttribute('aria-pressed', 'true');
+    });
+  });
+
+  var administeredContractToggle = document.getElementById('administered-contract-toggle');
+  if (administeredContractToggle) {
+    administeredContractToggle.addEventListener('change', function () {
+      administeredContractToggle.setAttribute('aria-checked', administeredContractToggle.checked ? 'true' : 'false');
     });
   }
 
-  /* Close drawer when clicking outside the modal content */
-  if (invoiceDrawer) {
-    invoiceDrawer.addEventListener('click', function (e) {
-      if (e.target === invoiceDrawer) {
-        invoiceDrawer.classList.add('hidden');
+  /* ── Direct Links: delivery terms controls ── */
+  function bindDirectLinkPillGroup(selector) {
+    var pills = document.querySelectorAll(selector);
+    pills.forEach(function (pill) {
+      pill.addEventListener('click', function () {
+        pills.forEach(function (otherPill) {
+          otherPill.classList.remove('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-300', 'font-medium');
+          otherPill.classList.add('border-slate-700', 'text-slate-400');
+          otherPill.setAttribute('aria-pressed', 'false');
+        });
+        pill.classList.remove('border-slate-700', 'text-slate-400');
+        pill.classList.add('bg-emerald-500/10', 'border-emerald-500/30', 'text-emerald-300', 'font-medium');
+        pill.setAttribute('aria-pressed', 'true');
+      });
+    });
+  }
+
+  bindDirectLinkPillGroup('.direct-link-transport-pill');
+  bindDirectLinkPillGroup('.direct-link-delivery-pill');
+
+  var useExwBtn = document.getElementById('use-exw-btn');
+  var directLinkIncotermSelect = document.getElementById('direct-link-incoterm-select');
+  if (useExwBtn && directLinkIncotermSelect) {
+    useExwBtn.addEventListener('click', function () {
+      directLinkIncotermSelect.value = 'EXW — Ex Works';
+    });
+  }
+
+  /* ── Direct Links: consignment line totals and cloning ── */
+  var consignmentList = document.getElementById('consignment-list');
+  var addConsignmentBtn = document.getElementById('add-consignment-btn');
+  if (consignmentList) {
+    var summarySubtotal = document.getElementById('summary-subtotal');
+    var summaryNet = document.getElementById('summary-net');
+    var summaryEscrowLock = document.getElementById('summary-escrow-lock');
+
+    function formatFinancialUSD(amount) {
+      return 'USD ' + amount.toFixed(2);
+    }
+
+    function updateFinancialSummary() {
+      var subtotal = 0;
+      consignmentList.querySelectorAll('.consignment-card').forEach(function (card) {
+        var quantity = parseFloat(card.querySelector('.consignment-quantity')?.value) || 0;
+        var price = parseFloat(card.querySelector('.consignment-price')?.value) || 0;
+        subtotal += quantity * price;
+      });
+      var discountRate = parseFloat(document.querySelector('.financial-discount-rate')?.value) || 0;
+      var freight = parseFloat(document.querySelector('.financial-freight-amount')?.value) || 0;
+      var deposit = parseFloat(document.querySelector('.financial-deposit-amount')?.value) || 0;
+      var retentionRate = parseFloat(document.querySelector('.financial-retention-rate')?.value) || 0;
+      var discount = document.getElementById('toggle-discount')?.checked ? subtotal * discountRate / 100 : 0;
+      var net = Math.max(0, subtotal - discount + (document.getElementById('toggle-freight')?.checked ? freight : 0));
+      var retention = document.getElementById('toggle-retention')?.checked ? net * retentionRate / 100 : 0;
+      var escrowLock = Math.max(0, net - (document.getElementById('toggle-deposit')?.checked ? deposit : 0) - retention);
+      if (document.getElementById('toggle-round-usd')?.checked) escrowLock = Math.round(escrowLock);
+      if (summarySubtotal) summarySubtotal.textContent = formatFinancialUSD(subtotal);
+      if (summaryNet) summaryNet.textContent = formatFinancialUSD(net);
+      if (summaryEscrowLock) summaryEscrowLock.textContent = formatFinancialUSD(escrowLock);
+    }
+
+    function updateConsignmentTotal(card) {
+      var quantity = parseFloat(card.querySelector('.consignment-quantity')?.value) || 0;
+      var price = parseFloat(card.querySelector('.consignment-price')?.value) || 0;
+      var total = card.querySelector('.consignment-line-total');
+      if (total) total.textContent = (quantity * price).toFixed(2);
+      updateFinancialSummary();
+    }
+
+    consignmentList.addEventListener('input', function (e) {
+      if (e.target.matches('.consignment-quantity, .consignment-price')) {
+        updateConsignmentTotal(e.target.closest('.consignment-card'));
+      }
+    });
+
+    consignmentList.querySelectorAll('.consignment-card').forEach(updateConsignmentTotal);
+
+    document.querySelectorAll('.financial-toggle').forEach(function (toggle) {
+      toggle.addEventListener('change', function () {
+        var fields = toggle.closest('div.py-4').querySelector('.financial-optional-fields');
+        if (fields) fields.classList.toggle('hidden', !toggle.checked);
+        updateFinancialSummary();
+      });
+    });
+    document.querySelectorAll('.financial-optional-fields input').forEach(function (input) {
+      input.addEventListener('input', updateFinancialSummary);
+    });
+
+    if (addConsignmentBtn) {
+      addConsignmentBtn.addEventListener('click', function () {
+        var cards = consignmentList.querySelectorAll('.consignment-card');
+        var newCard = cards[0].cloneNode(true);
+        var nextNumber = cards.length + 1;
+        newCard.querySelector('.consignment-label').textContent = 'Consignment ' + nextNumber;
+        newCard.querySelectorAll('input').forEach(function (input) {
+          if (input.classList.contains('consignment-quantity')) input.value = '1';
+          else if (input.classList.contains('consignment-price')) input.value = '';
+          else if (input.type === 'number') input.value = '';
+          else input.value = '';
+        });
+        newCard.querySelectorAll('select').forEach(function (select) {
+          select.selectedIndex = 0;
+        });
+        consignmentList.appendChild(newCard);
+        updateConsignmentTotal(newCard);
+      });
+    }
+  }
+
+  /* ── Direct Links: taxes and duties selection ── */
+  var taxDutyTags = document.querySelectorAll('.tax-duty-tag');
+  var taxDutyHelper = document.getElementById('tax-duty-helper');
+  taxDutyTags.forEach(function (tag) {
+    tag.addEventListener('click', function () {
+      var selected = tag.getAttribute('aria-pressed') !== 'true';
+      tag.setAttribute('aria-pressed', selected ? 'true' : 'false');
+      tag.classList.toggle('bg-emerald-500/10', selected);
+      tag.classList.toggle('border-emerald-500/30', selected);
+      tag.classList.toggle('text-emerald-300', selected);
+      if (taxDutyHelper) {
+        var selectedTags = Array.from(document.querySelectorAll('.tax-duty-tag[aria-pressed="true"]')).map(function (item) { return item.textContent; });
+        taxDutyHelper.textContent = selectedTags.length ? 'Selected: ' + selectedTags.join(', ') + '.' : 'No taxes or duties added. Tap a preset or add a custom line item.';
+      }
+    });
+  });
+
+  var taxesDutiesToggle = document.getElementById('taxes-duties-toggle');
+  var taxesDutiesPanel = document.getElementById('taxes-duties-panel');
+  if (taxesDutiesToggle && taxesDutiesPanel) {
+    taxesDutiesToggle.addEventListener('click', function () {
+      var expanded = taxesDutiesToggle.getAttribute('aria-expanded') === 'true';
+      taxesDutiesToggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+      taxesDutiesPanel.classList.toggle('hidden', expanded);
+      var caret = taxesDutiesToggle.querySelector('i');
+      if (caret) caret.classList.toggle('fa-chevron-down', expanded);
+      if (caret) caret.classList.toggle('fa-chevron-up', !expanded);
+    });
+  }
+
+  /* ── Direct Links: tax jurisdiction and filing facts ── */
+  document.querySelectorAll('.tax-jurisdiction-toggle').forEach(function (toggle) {
+    toggle.addEventListener('change', function () {
+      toggle.setAttribute('aria-checked', toggle.checked ? 'true' : 'false');
+    });
+  });
+
+  var verifyBuyerTaxBtn = document.getElementById('verify-buyer-tax-btn');
+  var buyerTaxRegistrationStatus = document.getElementById('buyer-tax-registration-status');
+  if (verifyBuyerTaxBtn && buyerTaxRegistrationStatus) {
+    verifyBuyerTaxBtn.addEventListener('click', function () {
+      buyerTaxRegistrationStatus.textContent = 'Registry check complete. Buyer tax registration verified as active.';
+      buyerTaxRegistrationStatus.classList.remove('text-slate-500');
+      buyerTaxRegistrationStatus.classList.add('text-emerald-300');
+      verifyBuyerTaxBtn.classList.remove('border-slate-700', 'text-slate-300');
+      verifyBuyerTaxBtn.classList.add('border-emerald-500/30', 'text-emerald-300');
+    });
+  }
+
+  /* ── Direct Links: contract instruments and payment link validation ── */
+  document.querySelectorAll('.contract-instrument-toggle').forEach(function (toggle) {
+    toggle.addEventListener('change', function () {
+      toggle.setAttribute('aria-checked', toggle.checked ? 'true' : 'false');
+    });
+  });
+
+  document.querySelectorAll('.contract-instrument-add').forEach(function (button) {
+    button.addEventListener('click', function () {
+      var added = button.getAttribute('aria-pressed') === 'true';
+      button.setAttribute('aria-pressed', added ? 'false' : 'true');
+      button.textContent = added ? '+ Add' : 'Added';
+      button.classList.toggle('border-emerald-500/30', !added);
+      button.classList.toggle('text-emerald-300', !added);
+    });
+  });
+
+  var generatePaymentLinkBtn = document.getElementById('generate-payment-link-btn');
+  var nextRedFieldBtn = document.getElementById('next-red-field-btn');
+  var directLinkValidationFields = [
+    document.getElementById('seller-legal-name'),
+    document.getElementById('seller-street-address'),
+    document.getElementById('seller-city')
+  ];
+
+  function getInvalidDirectLinkFields() {
+    var invalidFields = [];
+    var firstConsignment = document.querySelector('.consignment-card');
+    var description = firstConsignment?.querySelector('.consignment-description');
+    var price = firstConsignment?.querySelector('.consignment-price');
+    if (description && !description.value.trim()) invalidFields.push(description);
+    if (price && (!(parseFloat(price.value) > 0))) invalidFields.push(price);
+    directLinkValidationFields.forEach(function (field) {
+      if (field && !field.value.trim()) invalidFields.push(field);
+    });
+    return invalidFields;
+  }
+
+  function validateDirectLinkForm() {
+    var invalidFields = getInvalidDirectLinkFields();
+    document.querySelectorAll('#direct-links-view .settings-input').forEach(function (field) {
+      field.classList.remove('border-rose-500', 'ring-1', 'ring-rose-500/50');
+    });
+    invalidFields.forEach(function (field) {
+      field.classList.add('border-rose-500', 'ring-1', 'ring-rose-500/50');
+    });
+    if (generatePaymentLinkBtn) {
+      generatePaymentLinkBtn.disabled = invalidFields.length > 0;
+      generatePaymentLinkBtn.classList.toggle('opacity-60', invalidFields.length > 0);
+      generatePaymentLinkBtn.classList.toggle('cursor-not-allowed', invalidFields.length > 0);
+      generatePaymentLinkBtn.classList.toggle('hover:bg-emerald-400', invalidFields.length === 0);
+    }
+    return invalidFields;
+  }
+
+  if (nextRedFieldBtn) {
+    nextRedFieldBtn.addEventListener('click', function () {
+      var invalidFields = validateDirectLinkForm();
+      if (invalidFields[0]) {
+        invalidFields[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        invalidFields[0].focus();
       }
     });
   }
 
-  /* Validation: enable generate button when description and price are filled */
-  function validateInvoiceFields() {
-    var desc = invoiceItemDesc ? invoiceItemDesc.value.trim() : '';
-    var price = invoiceItemPrice ? parseFloat(invoiceItemPrice.value) : 0;
-    if (desc.length > 0 && price > 0) {
-      submitPaymentBtn.className = 'bg-emerald-600 hover:bg-emerald-500 text-slate-100 cursor-pointer w-full py-3 rounded-lg font-bold transition-all mt-4';
-    } else {
-      submitPaymentBtn.className = 'bg-slate-500 text-slate-200 cursor-not-allowed w-full py-3 rounded-lg font-bold transition-all mt-4';
-    }
+  document.querySelectorAll('#direct-links-view .settings-input').forEach(function (field) {
+    field.addEventListener('input', validateDirectLinkForm);
+  });
+  if (generatePaymentLinkBtn) {
+    generatePaymentLinkBtn.addEventListener('click', function () {
+      var invalidFields = validateDirectLinkForm();
+      if (invalidFields[0]) {
+        invalidFields[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        invalidFields[0].focus();
+      } else {
+        generatePaymentLinkBtn.textContent = 'Payment Link Generated';
+      }
+    });
   }
-
-  if (invoiceItemDesc) {
-    invoiceItemDesc.addEventListener('input', validateInvoiceFields);
-  }
-  if (invoiceItemPrice) {
-    invoiceItemPrice.addEventListener('input', validateInvoiceFields);
-  }
+  validateDirectLinkForm();
 
   /* ── Quote Hub sub-tab toggle: switch between Quote Requests & Milestone Agreements ── */
   var quoteHubToggles = document.querySelectorAll('.quote-hub-toggle');
@@ -368,39 +697,6 @@ document.addEventListener('DOMContentLoaded', function () {
     jumpToDirectLinks.addEventListener('click', function (e) {
       e.preventDefault();
       showView('direct-links');
-    });
-  }
-
-  /* ── Analytics Hub sub-tab highlight toggle + panel routing ── */
-  var analyticsHubTabs = document.querySelectorAll('.analytics-hub-tab');
-  var analyticsPanelDefault = document.getElementById('analytics-panel-default');
-  var analyticsPanelWidget   = document.getElementById('analytics-panel-widget');
-  var analyticsPanelReports  = document.getElementById('analytics-panel-reports');
-  var analyticsPanelArchives = document.getElementById('analytics-panel-archives');
-  if (analyticsHubTabs.length && analyticsPanelDefault && analyticsPanelWidget && analyticsPanelReports && analyticsPanelArchives) {
-    analyticsHubTabs.forEach(function (tab) {
-      tab.addEventListener('click', function () {
-        analyticsHubTabs.forEach(function (t) {
-          t.classList.remove('bg-slate-800', 'text-slate-100', 'font-semibold');
-          t.classList.add('text-slate-400');
-        });
-        tab.classList.remove('text-slate-400');
-        tab.classList.add('bg-slate-800', 'text-slate-100', 'font-semibold');
-        /* Route panels by index: 0=Analytics, 1=Widget, 2=Reports, 3=Archives */
-        analyticsPanelDefault.classList.add('hidden');
-        analyticsPanelWidget.classList.add('hidden');
-        analyticsPanelReports.classList.add('hidden');
-        analyticsPanelArchives.classList.add('hidden');
-        if (analyticsHubTabs[0] === tab) {
-          analyticsPanelDefault.classList.remove('hidden');
-        } else if (analyticsHubTabs[1] === tab) {
-          analyticsPanelWidget.classList.remove('hidden');
-        } else if (analyticsHubTabs[2] === tab) {
-          analyticsPanelReports.classList.remove('hidden');
-        } else if (analyticsHubTabs[3] === tab) {
-          analyticsPanelArchives.classList.remove('hidden');
-        }
-      });
     });
   }
 
@@ -439,9 +735,13 @@ document.addEventListener('DOMContentLoaded', function () {
   if (directLinksView)      directLinksView.classList.add('hidden');
   if (buyerLookupView)      buyerLookupView.classList.add('hidden');
   if (quoteRequestsView)    quoteRequestsView.classList.add('hidden');
-  if (analyticsReportsView) analyticsReportsView.classList.add('hidden');
   if (lenderLookupView)     lenderLookupView.classList.add('hidden');
   if (requestFinancingView) requestFinancingView.classList.add('hidden');
   if (repaymentsView)       repaymentsView.classList.add('hidden');
   if (fundedRepaymentsView) fundedRepaymentsView.classList.add('hidden');
+  if (proofExplorerView)    proofExplorerView.classList.add('hidden');
+  if (messagesView)         messagesView.classList.add('hidden');
+  if (disputesView)         disputesView.classList.add('hidden');
+  if (helpCenterView)       helpCenterView.classList.add('hidden');
+  if (settingsView)         settingsView.classList.add('hidden');
 });

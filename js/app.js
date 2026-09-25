@@ -106,8 +106,19 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  authToggle('select-vendor-btn',    personaSelectionView, vendorSigninView);
-  authToggle('select-buyer-btn',     personaSelectionView, buyerSigninView);
+  var vendorProfileBtn = document.getElementById('select-vendor-btn');
+  if (vendorProfileBtn) {
+    vendorProfileBtn.addEventListener('click', function () {
+      window.location.href = 'vendordashboard.html';
+    });
+  }
+
+  var buyerProfileBtn = document.getElementById('select-buyer-btn');
+  if (buyerProfileBtn) {
+    buyerProfileBtn.addEventListener('click', function () {
+      window.location.href = 'buyerdashboard.html';
+    });
+  }
   authToggle('go-to-vendor-register', vendorSigninView,    vendorRegisterView);
   authToggle('go-to-buyer-register',  buyerSigninView,     buyerRegisterView);
   authToggle('reg-vendor-opt-btn',   registerSelectionView, vendorRegisterView);

@@ -30,6 +30,24 @@
             transform: translateY(0);
             pointer-events: auto;
         }
+        .settings-input {
+            width: 100%;
+            background: rgba(2, 6, 23, 0.6);
+            border: 1px solid rgba(30, 41, 59, 0.6);
+            color: #e2e8f0;
+            padding: 0.625rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+        .settings-notification-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto auto;
+            gap: 1.5rem;
+            align-items: center;
+            padding: 0.75rem 0;
+            color: #cbd5e1;
+            font-size: 0.875rem;
+        }
     </style>
 
     <div class="flex-shrink-0 border-b border-slate-800/60 bg-slate-950/10 px-6 py-4">
@@ -152,7 +170,6 @@
                     <i class="fa-solid fa-chevron-down vendor-fold-icon transition-transform duration-200"></i>
                 </button>
                 <div id="vendor-submenu-tools" class="hidden space-y-2 pl-4 text-slate-300">
-                    <a href="#" class="block rounded-2xl px-3 py-2 hover:bg-slate-900/80 transition-all">Analytics & Report</a>
                     <a href="#" class="block rounded-2xl px-3 py-2 hover:bg-slate-900/80 transition-all">Proof explorer</a>
                 </div>
             </div>
@@ -180,9 +197,8 @@
             </div>
         </aside>
 
-        <main class="flex-1 h-full overflow-y-visible p-8 bg-[#05070f]">
-            <div class="h-full overflow-y-auto">
-            <div id="vendor-overview-view">
+        <main class="flex-1 h-full overflow-y-auto p-8 bg-[#05070f]">
+            <div id="overview-view">
             <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between mb-8">
                 <div>
                     <p class="text-sm uppercase tracking-[0.45em] text-emerald-300 font-semibold mb-2">Vendor Command Center</p>
@@ -996,37 +1012,356 @@
              DIRECT LINKS VIEW — hidden by default, toggled via sidebar
              ============================================================ -->
         <div id="direct-links-view" class="hidden w-full flex-1 flex flex-col space-y-6">
-
-            <!-- Top Banner Box -->
-            <div class="bg-emerald-950/20 border border-emerald-800/40 rounded-xl p-4 flex items-start space-x-3">
-                <div class="flex-1">
-                    <p class="text-sm font-bold text-emerald-300">P2P Escrow Links — No Website Required</p>
-                    <p class="text-xs text-slate-400/90 mt-1 leading-relaxed">Create a shareable payment link with an attached invoice. Your buyer reviews the invoice, pays through TrustLock's escrow, and funds are held securely until delivery is confirmed. Works for Facebook Marketplace, WhatsApp deals, freelance gigs, and more.</p>
-                </div>
+            <div class="space-y-1">
+                <p class="text-xs uppercase tracking-[0.3em] text-emerald-300 font-semibold">STEP 1 · WHO THIS INVOICE IS BETWEEN</p>
+                <h2 class="text-2xl font-bold text-slate-100">PARTIES &amp; PAYMENT TERMS</h2>
             </div>
 
-            <!-- Actions Control Line -->
-            <div class="flex items-center justify-between gap-4 flex-wrap">
-                <h3 class="text-xl font-bold text-slate-100">Your Links</h3>
-                <div class="flex items-center gap-3 flex-wrap">
-                    <input type="search" placeholder="Search links..."
-                           class="bg-slate-950/60 border border-slate-800/60 text-slate-200 px-4 py-2 rounded-lg text-sm focus:outline-none focus:border-emerald-500/50 placeholder:text-slate-500 w-48">
-                    <button type="button" class="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-950/60 border border-slate-800/60 text-slate-300 text-sm hover:border-slate-600 transition-colors">
-                        <i class="fa-solid fa-filter text-xs"></i> All
-                    </button>
-                    <button type="button" id="create-new-link-btn" class="bg-emerald-600 hover:bg-emerald-500 text-slate-100 font-semibold px-5 py-2 rounded-lg flex items-center space-x-1.5 cursor-pointer transition-colors">
-                        <i class="fa-solid fa-plus"></i> <span>New</span>
-                    </button>
-                </div>
-            </div>
+            <form id="direct-link-step-one-form" class="space-y-6" action="#" method="post">
+                <section class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-6 space-y-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-100">Who are you invoicing?</h3>
+                        <div class="flex flex-wrap gap-2 mt-3" role="group" aria-label="Buyer type">
+                            <button type="button" class="direct-link-party-pill px-4 py-2 rounded-lg border border-slate-700 text-slate-400 text-sm" data-party-type="business" aria-pressed="false">Business</button>
+                            <button type="button" class="direct-link-party-pill bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 px-4 py-2 rounded-lg text-sm font-medium" data-party-type="consumer" aria-pressed="true">Consumer</button>
+                            <button type="button" class="direct-link-party-pill px-4 py-2 rounded-lg border border-slate-700 text-slate-400 text-sm" data-party-type="government" aria-pressed="false">Government</button>
+                        </div>
+                        <p class="text-sm text-slate-400 mt-3">Individual buyer — no tax ID or PO needed.</p>
+                    </div>
+                    <div class="bg-emerald-950/20 border border-emerald-800/40 rounded-lg p-4 flex gap-3 text-sm text-slate-300">
+                        <i class="fa-solid fa-circle-info text-emerald-400 mt-0.5"></i>
+                        <span>Use the legal names and addresses that should appear on the invoice.</span>
+                    </div>
+                </section>
 
-            <!-- Empty State List Container -->
-            <div id="links-empty-state" class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-12 flex flex-col items-center justify-center space-y-3">
-                <div class="w-16 h-16 rounded-full bg-slate-800/50 flex items-center justify-center text-slate-500">
-                    <i class="fa-solid fa-link text-2xl"></i>
+                <section class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-6 space-y-5">
+                    <div class="flex items-start justify-between gap-4">
+                        <div><h3 class="text-lg font-bold text-slate-100">SELLER (YOU)</h3><p class="text-sm text-slate-400 mt-1">Who is legally issuing this invoice.</p></div>
+                        <button type="button" class="text-sm text-emerald-300 hover:text-emerald-200">Save as default</button>
+                    </div>
+                    <input id="seller-legal-name" type="text" placeholder="Registered legal name (as on your registration certificate)" class="settings-input">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><select class="settings-input" aria-label="Seller country"><option selected>UA — Ukraine</option><option>GH — Ghana</option><option>US — United States</option></select><a href="#" class="text-sm text-emerald-300 hover:text-emerald-200 self-center">Use my current location</a></div>
+                    <input id="seller-street-address" type="text" placeholder="Street address" class="settings-input"><input type="text" placeholder="Building, floor, unit (optional)" class="settings-input">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><input id="seller-city" type="text" placeholder="City / Town" class="settings-input"><input type="text" placeholder="State / Province / Region" class="settings-input"></div>
+                    <input type="text" placeholder="Postal code" class="settings-input">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><input type="text" placeholder="Tax ID / VAT / EIN (optional)" class="settings-input"><input type="email" placeholder="Email (optional)" class="settings-input"></div>
+                </section>
+
+                <section class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-6 space-y-5">
+                    <div><h3 class="text-lg font-bold text-slate-100">BUYER (CUSTOMER)</h3><p class="text-sm text-slate-400 mt-1">Name and address only — consumers have no tax ID to quote.</p></div>
+                    <input type="text" placeholder="Registered legal name (as on your registration certificate)" class="settings-input"><select class="settings-input" aria-label="Buyer country"><option selected>GH — Ghana</option><option>UA — Ukraine</option><option>US — United States</option></select>
+                    <input type="text" placeholder="Street address" class="settings-input"><input type="text" placeholder="Digital address (e.g. GA-123-4567) or landmark" class="settings-input">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><input type="text" placeholder="City / Town" class="settings-input"><input type="text" placeholder="Region" class="settings-input"></div><input type="email" placeholder="Email (optional)" class="settings-input">
+                </section>
+
+                <section class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-6 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><label class="text-sm text-slate-300">Payment terms<select class="settings-input mt-2"><option selected>Net 7 days</option><option>Due on receipt</option><option>Net 15 days</option><option>Net 30 days</option></select></label><label class="text-sm text-slate-300">Due date<input type="date" value="2026-09-27" class="settings-input mt-2"></label></div>
+                    <p class="text-sm text-slate-400">Net 7 days — escrow funding is expected by 2026-09-27 (UTC).</p>
+                </section>
+
+                <section class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-6"><label class="flex items-start gap-3 cursor-pointer"><input type="checkbox" class="mt-1 accent-emerald-500"><span><span class="block text-sm font-semibold text-slate-200">I charge tax on this invoice</span><span class="block text-sm text-slate-400 mt-1">Turn this on only if you are tax-registered and must add your own VAT / GST / sales tax.</span></span></label></section>
+            </form>
+
+            <section id="direct-link-step-two" class="space-y-6">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-globe text-emerald-400"></i>
+                    <h2 class="text-2xl font-bold text-slate-100">STEP 2 · TRADE CONTEXT</h2>
                 </div>
-                <p class="text-sm text-slate-400">No payment links yet. Tap 'New' to create one.</p>
-            </div>
+
+                <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-6 space-y-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label class="text-sm text-slate-300">Industry<select class="settings-input mt-2"><option selected>Logistics &amp; Cross-Border Trade...</option><option>Construction</option><option>Manufacturing &amp; Equipment</option><option>Professional Services</option></select></label>
+                        <label class="text-sm text-slate-300">Currency<select class="settings-input mt-2"><option selected>USD — US Dollar</option><option>EUR — Euro</option><option>GBP — British Pound</option><option>USDC — USD Coin</option></select></label>
+                    </div>
+
+                    <div>
+                        <p class="text-sm text-slate-300 mb-3">Trade scope:</p>
+                        <div class="flex flex-wrap gap-2" role="group" aria-label="Trade scope">
+                            <button type="button" class="direct-link-scope-pill px-4 py-2 rounded-lg border border-slate-700 text-slate-400 text-sm" aria-pressed="false">Domestic</button>
+                            <button type="button" class="direct-link-scope-pill px-4 py-2 rounded-lg border border-slate-700 text-slate-400 text-sm" aria-pressed="false">Regional / Corridor</button>
+                            <button type="button" class="direct-link-scope-pill bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 px-4 py-2 rounded-lg text-sm font-medium" aria-pressed="true">International</button>
+                            <button type="button" class="direct-link-scope-pill px-4 py-2 rounded-lg border border-slate-700 text-slate-400 text-sm" aria-pressed="false">Hybrid</button>
+                        </div>
+                    </div>
+
+                    <div class="border border-slate-700/70 rounded-xl p-5 space-y-5">
+                        <h3 class="text-xs uppercase tracking-[0.25em] text-slate-300 font-semibold">THIS ORDER WILL REQUIRE</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="inline-flex items-center gap-2 rounded-full bg-slate-950/60 border border-slate-700 px-3 py-2 text-xs text-slate-300"><i class="fa-solid fa-box text-emerald-400"></i>Physical shipment</span>
+                            <span class="inline-flex items-center gap-2 rounded-full bg-slate-950/60 border border-slate-700 px-3 py-2 text-xs text-slate-300"><i class="fa-solid fa-shield-halved text-emerald-400"></i>Milestone escrow</span>
+                            <span class="inline-flex items-center gap-2 rounded-full bg-slate-950/60 border border-slate-700 px-3 py-2 text-xs text-slate-300"><i class="fa-solid fa-location-dot text-emerald-400"></i>GPS gate required</span>
+                            <span class="inline-flex items-center gap-2 rounded-full bg-slate-950/60 border border-slate-700 px-3 py-2 text-xs text-slate-300"><i class="fa-solid fa-truck text-emerald-400"></i>Shipping &amp; freight panel</span>
+                            <span class="inline-flex items-center gap-2 rounded-full bg-slate-950/60 border border-slate-700 px-3 py-2 text-xs text-slate-300"><i class="fa-solid fa-file-contract text-emerald-400"></i>Incoterms 2020</span>
+                        </div>
+                        <div class="border-t border-slate-800/70 pt-5">
+                            <div class="flex items-center gap-2 text-slate-200 font-semibold text-sm"><i class="fa-regular fa-file-lines text-emerald-400"></i>Document set implied</div>
+                            <div class="flex flex-wrap gap-2 mt-3">
+                                <span class="rounded-full bg-slate-950/60 border border-slate-700 px-3 py-1.5 text-xs text-slate-300">Proforma invoice</span>
+                                <span class="rounded-full bg-slate-950/60 border border-slate-700 px-3 py-1.5 text-xs text-slate-300">Escrow agreement</span>
+                                <span class="rounded-full bg-slate-950/60 border border-slate-700 px-3 py-1.5 text-xs text-slate-300">Packing list</span>
+                                <span class="rounded-full bg-slate-950/60 border border-slate-700 px-3 py-1.5 text-xs text-slate-300">Proof of delivery (POD)</span>
+                                <span class="rounded-full bg-slate-950/60 border border-slate-700 px-3 py-1.5 text-xs text-slate-300">Bill of lading / air waybill</span>
+                                <span class="rounded-full bg-slate-950/60 border border-slate-700 px-3 py-1.5 text-xs text-slate-300">Certificate of origin</span>
+                                <span class="rounded-full bg-slate-950/60 border border-slate-700 px-3 py-1.5 text-xs text-slate-300">Customs declaration</span>
+                            </div>
+                        </div>
+                        <p class="text-xs leading-relaxed text-slate-500">Derived from — Sector: Logistics &amp; Cross-Border Trade · Fulfillment: Physical shipment · Trade scope: International (declared)</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-6 flex items-start justify-between gap-5">
+                    <div><h3 class="text-lg font-bold text-slate-100">ADMINISTERED CONTRACT (OPTIONAL)</h3><p class="text-sm text-slate-400 mt-2 max-w-3xl">For public awards and contracts paid against interim certificates. Sets retention and certification rules on the order before any money is locked.</p></div>
+                    <label class="relative inline-flex items-center shrink-0 cursor-pointer" aria-label="Administered Contract">
+                        <input id="administered-contract-toggle" type="checkbox" class="sr-only peer" aria-checked="false">
+                        <span class="w-11 h-6 bg-slate-700 rounded-full peer-checked:bg-emerald-500 transition-colors"></span>
+                        <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></span>
+                    </label>
+                </div>
+
+                <div class="bg-emerald-950/20 border border-emerald-800/40 rounded-lg p-4 flex gap-3 text-sm text-slate-300"><i class="fa-solid fa-circle-info text-emerald-400 mt-0.5"></i><span>(i) Invoiced in USD. Escrow holds USDC or USDT on Polygon, so the buyer can pay from any supported country.</span></div>
+            </section>
+
+            <section id="direct-link-step-three" class="space-y-6">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-calendar-days text-emerald-400"></i>
+                    <h2 class="text-2xl font-bold text-slate-100">STEP 3 · DELIVERY TERMS</h2>
+                </div>
+
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                    <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-6 space-y-5">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-globe text-emerald-400"></i>
+                            <h3 class="text-lg font-bold text-slate-100">Incoterms 2020</h3>
+                            <span class="vendor-tooltip relative inline-flex items-center justify-center text-slate-400">
+                                <i class="fa-solid fa-circle-info text-sm"></i>
+                                <span class="vendor-tooltip-tip absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-xs text-slate-300 shadow-lg">Defines who handles transport, costs, and risk.</span>
+                            </span>
+                        </div>
+
+                        <div class="flex flex-wrap gap-2" role="group" aria-label="Transport arrangement">
+                            <button type="button" class="direct-link-transport-pill px-4 py-2 rounded-lg border border-slate-700 text-slate-400 text-sm" aria-pressed="false">I arrange transport</button>
+                            <button type="button" class="direct-link-transport-pill bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 px-4 py-2 rounded-lg text-sm font-medium" aria-pressed="true">Buyer arranges transport</button>
+                        </div>
+
+                        <label class="block text-sm text-slate-300">Incoterm
+                            <select id="direct-link-incoterm-select" class="settings-input mt-2">
+                                <option selected>FCA — Free Carrier</option>
+                                <option>EXW — Ex Works</option>
+                                <option>DAP — Delivered at Place</option>
+                            </select>
+                        </label>
+
+                        <div class="border border-amber-400/50 rounded-xl p-5 space-y-3">
+                            <span class="inline-flex items-center rounded-full bg-amber-400/10 border border-amber-400/30 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-amber-300">Suggested</span>
+                            <p class="font-semibold text-slate-100">Suggested: EXW — Ex Works</p>
+                            <p class="text-sm leading-relaxed text-slate-300">Domestic order where the buyer collects — EXW keeps transport and its cost entirely on their side.</p>
+                            <p class="text-xs leading-relaxed text-slate-400">Freight: the buyer · Cargo insurance: the buyer · Export clearance: the buyer · Import duty &amp; clearance: the buyer.</p>
+                            <button id="use-exw-btn" type="button" class="text-sm font-semibold text-amber-300 hover:text-amber-200">Use EXW</button>
+                        </div>
+
+                        <div class="border border-slate-700/70 rounded-xl p-5 space-y-3 text-sm leading-relaxed text-slate-300">
+                            <p>You hand the goods to the buyer's carrier and clear them for export. From that point the buyer pays the freight.</p>
+                            <p>Freight: the buyer · Cargo insurance: the buyer · Export clearance: you · Import duty &amp; clearance: the buyer.</p>
+                            <p>One Incoterm governs the whole order — it sets where your responsibility ends, not a date. Dispatch, arrival and acceptance are separate dated events on the delivery timeline and the milestone schedule.</p>
+                        </div>
+
+                        <p class="text-sm text-slate-400">Also common on orders like this: FCA, DAP.</p>
+                    </div>
+
+                    <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-6 space-y-5">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-truck text-emerald-400"></i>
+                            <h3 class="text-lg font-bold text-slate-100">Delivery terms</h3>
+                        </div>
+
+                        <div class="flex flex-wrap gap-2" role="group" aria-label="Delivery timing">
+                            <button type="button" class="direct-link-delivery-pill bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 px-4 py-2 rounded-lg text-sm font-medium" aria-pressed="true">In X days</button>
+                            <button type="button" class="direct-link-delivery-pill px-4 py-2 rounded-lg border border-slate-700 text-slate-400 text-sm" aria-pressed="false">On a date</button>
+                        </div>
+
+                        <div class="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-3">
+                            <input type="number" value="14" min="0" class="settings-input" aria-label="Delivery time">
+                            <select class="settings-input" aria-label="Delivery time unit">
+                                <option selected>business days</option>
+                            </select>
+                        </div>
+
+                        <div class="flex items-start gap-3 text-sm text-slate-300">
+                            <i class="fa-regular fa-clock text-emerald-400 mt-0.5"></i>
+                            <span>The clock starts when escrow is funded, not when you send this invoice.</span>
+                        </div>
+
+                        <button type="button" class="text-sm font-semibold text-emerald-300 hover:text-emerald-200">+ Add a condition (e.g. after approval)</button>
+                        <p class="border-t border-slate-800/70 pt-4 text-sm leading-relaxed text-slate-400">Handover, carriage and who bears risk at each leg — read alongside the Incoterm above.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="direct-link-step-four" class="space-y-6">
+                <div class="space-y-1">
+                    <h2 class="text-2xl font-bold text-slate-100">STEP 4 · CONSIGNMENT LINES</h2>
+                    <p class="text-sm leading-relaxed text-slate-400">Describe each consignment the way a customs officer would need to read it: what it is, how much, and to what specification.</p>
+                </div>
+
+                <div id="consignment-list" class="space-y-4">
+                    <div class="consignment-card bg-slate-900/40 border border-slate-800/60 rounded-xl p-6 space-y-5">
+                        <div class="flex items-center justify-between">
+                            <h3 class="consignment-label text-lg font-bold text-slate-100">Consignment 1</h3>
+                        </div>
+
+                        <input type="text" class="consignment-description settings-input" placeholder="e.g. “1 × 40ft HC, Shanghai → Mombasa, general cargo 18...">
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <label class="text-sm text-slate-300">Quantity<input type="number" value="1" min="0" class="consignment-quantity settings-input mt-2"></label>
+                            <label class="text-sm text-slate-300">Unit of measure<select class="settings-input mt-2"><option selected>Pallet</option><option>Container</option><option>Piece</option><option>Box</option><option>Ton</option></select></label>
+                            <label class="text-sm text-slate-300">Price (USD)<input type="number" placeholder="0.00" min="0" step="0.01" class="consignment-price settings-input mt-2"></label>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <label class="text-sm text-slate-300">Tax category<select class="settings-input mt-2"><option selected>Standard rated</option><option>Zero rated</option><option>Exempt</option></select></label>
+                                <label class="text-sm text-slate-300">Rate % (optional)<input type="number" placeholder="0 (default)" min="0" step="0.01" class="settings-input mt-2"></label>
+                            </div>
+                            <p class="text-xs leading-relaxed text-slate-500">Your normal VAT / GST / sales tax applies to this line. Override the rate for reduced-rate goods such as food, books, medicines or construction.</p>
+                        </div>
+
+                        <div class="border-t border-slate-800/70 pt-5 space-y-4">
+                            <div class="flex items-center gap-2 text-sm font-semibold text-slate-200"><i class="fa-solid fa-cube text-emerald-400"></i><span>Customs (optional)</span></div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <label class="text-sm text-slate-300">HS code
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <input type="text" placeholder="6+ digits" class="settings-input">
+                                        <span class="vendor-tooltip relative inline-flex items-center justify-center shrink-0 text-slate-400"><i class="fa-solid fa-circle-info text-xs"></i><span class="vendor-tooltip-tip absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-xs text-slate-300 shadow-lg">The Harmonized System code classifies your goods.</span></span>
+                                        <button type="button" class="shrink-0 rounded-full border border-slate-700 px-3 py-2 text-xs text-slate-300 hover:border-emerald-400 hover:text-emerald-300">? Help me find it</button>
+                                    </div>
+                                </label>
+                                <label class="text-sm text-slate-300">Country of origin
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <select class="settings-input"><option selected>China</option><option>Ukraine</option><option>Ghana</option><option>United States</option></select>
+                                        <span class="vendor-tooltip relative inline-flex items-center justify-center shrink-0 text-slate-400"><i class="fa-solid fa-circle-info text-xs"></i><span class="vendor-tooltip-tip absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 rounded-xl bg-slate-900 border border-slate-700 px-3 py-2 text-xs text-slate-300 shadow-lg">Where the goods were made or produced.</span></span>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <label class="text-sm text-slate-300">Net weight (kg)<input type="number" value="0.01" min="0" step="0.01" class="settings-input mt-2"></label>
+                                <label class="text-sm text-slate-300">Gross weight (kg)<input type="number" placeholder="0" min="0" step="0.01" class="settings-input mt-2"></label>
+                            </div>
+                            <p class="text-xs leading-relaxed text-slate-500">Feeds the duty and tariff estimate the buyer sees at checkout.</p>
+                        </div>
+
+                        <div class="border-t border-slate-800/70 pt-4 flex flex-col items-end gap-2 text-sm">
+                            <p class="font-semibold text-slate-200">Line total: USD <span class="consignment-line-total">0.00</span></p>
+                            <div class="self-stretch text-xs text-rose-300 space-y-1 md:self-end"><p>• Describe this consignment</p><p>• Set a price above zero</p></div>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="add-consignment-btn" type="button" class="w-full rounded-lg border border-dashed border-emerald-500/40 bg-emerald-500/5 px-4 py-3 text-sm font-semibold text-emerald-300 hover:bg-emerald-500/10">+ Add consignment</button>
+            </section>
+
+            <section id="direct-link-financial-terms" class="space-y-6">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-percent text-emerald-400"></i>
+                    <h2 class="text-2xl font-bold text-slate-100">DISCOUNTS, CHARGES &amp; DEPOSITS</h2>
+                </div>
+
+                <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-6 space-y-5">
+                    <p class="text-sm leading-relaxed text-slate-400">Optional. Tax is calculated on the net after a discount or charge, and any deposit you already received is deducted from what escrow locks.</p>
+                    <div class="divide-y divide-slate-800/70">
+                        <div class="py-4 first:pt-0">
+                            <label class="flex items-center justify-between gap-4 text-sm text-slate-200 cursor-pointer"><span>% Discount</span><span class="relative inline-flex items-center"><input id="toggle-discount" type="checkbox" class="sr-only peer financial-toggle"><span class="w-11 h-6 rounded-full bg-slate-700 peer-checked:bg-emerald-500 transition-colors"></span><span class="absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-transform peer-checked:translate-x-5"></span></span></label>
+                            <div class="financial-optional-fields hidden mt-3"><input type="number" class="financial-discount-rate settings-input" placeholder="0" min="0" max="100" step="0.01" aria-label="Discount percentage"></div>
+                        </div>
+                        <div class="py-4">
+                            <label class="flex items-center justify-between gap-4 text-sm text-slate-200 cursor-pointer"><span>🚚 Freight or other charge</span><span class="relative inline-flex items-center"><input id="toggle-freight" type="checkbox" class="sr-only peer financial-toggle"><span class="w-11 h-6 rounded-full bg-slate-700 peer-checked:bg-emerald-500 transition-colors"></span><span class="absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-transform peer-checked:translate-x-5"></span></span></label>
+                            <div class="financial-optional-fields hidden mt-3"><input type="number" class="financial-freight-amount settings-input" placeholder="0.00" min="0" step="0.01" aria-label="Freight or other charge amount"></div>
+                        </div>
+                        <div class="py-4">
+                            <label class="flex items-center justify-between gap-4 text-sm text-slate-200 cursor-pointer"><span>📅 Deposit already received</span><span class="relative inline-flex items-center"><input id="toggle-deposit" type="checkbox" class="sr-only peer financial-toggle"><span class="w-11 h-6 rounded-full bg-slate-700 peer-checked:bg-emerald-500 transition-colors"></span><span class="absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-transform peer-checked:translate-x-5"></span></span></label>
+                            <div class="financial-optional-fields hidden mt-3"><input type="number" class="financial-deposit-amount settings-input" placeholder="0.00" min="0" step="0.01" aria-label="Deposit amount"></div>
+                        </div>
+                        <div class="py-4">
+                            <label class="flex items-center justify-between gap-4 text-sm text-slate-200 cursor-pointer"><span>🛡️ Retention held back</span><span class="relative inline-flex items-center"><input id="toggle-retention" type="checkbox" class="sr-only peer financial-toggle"><span class="w-11 h-6 rounded-full bg-slate-700 peer-checked:bg-emerald-500 transition-colors"></span><span class="absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-transform peer-checked:translate-x-5"></span></span></label>
+                            <div class="financial-optional-fields hidden mt-3"><input type="number" class="financial-retention-rate settings-input" placeholder="0" min="0" max="100" step="0.01" aria-label="Retention percentage"></div>
+                        </div>
+                        <div class="py-4 last:pb-0">
+                            <label class="flex items-center justify-between gap-4 text-sm text-slate-200 cursor-pointer"><span>Round the total to a whole USD</span><span class="relative inline-flex items-center"><input id="toggle-round-usd" type="checkbox" class="sr-only peer financial-toggle"><span class="w-11 h-6 rounded-full bg-slate-700 peer-checked:bg-emerald-500 transition-colors"></span><span class="absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-transform peer-checked:translate-x-5"></span></span></label>
+                        </div>
+                    </div>
+                    <div class="border-t border-slate-800/70 pt-5 space-y-3">
+                        <div class="flex items-center justify-between text-sm text-slate-400"><span>Line subtotal</span><span id="summary-subtotal">USD 0.00</span></div>
+                        <div class="flex items-center justify-between text-sm text-slate-300"><span>Net (taxable)</span><span id="summary-net">USD 0.00</span></div>
+                        <div class="flex items-center justify-between text-base font-bold text-slate-100"><span>Escrow will lock</span><span id="summary-escrow-lock">USD 0.00</span></div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between gap-4 border-b border-slate-800/70 pb-3">
+                        <div class="flex items-center gap-2 text-lg font-bold text-slate-100"><i class="fa-solid fa-circle-info text-emerald-400"></i><span>Taxes &amp; Duties</span></div>
+                        <button id="taxes-duties-toggle" type="button" class="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-slate-200" aria-expanded="true">None <i class="fa-solid fa-chevron-up text-xs"></i></button>
+                    </div>
+                    <div id="taxes-duties-panel" class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-6 space-y-5">
+                        <div class="flex flex-wrap gap-2"><button type="button" class="tax-duty-action rounded-full border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:border-emerald-400 hover:text-emerald-300">+ Preset</button><button type="button" class="tax-duty-action rounded-full border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:border-emerald-400 hover:text-emerald-300">+ Custom</button></div>
+                        <div class="border border-slate-700/70 rounded-xl p-5 space-y-5">
+                            <div><p class="text-xs uppercase tracking-[0.25em] text-slate-500 mb-3">STANDARD</p><div class="flex flex-wrap gap-2"><button type="button" class="tax-duty-tag rounded-full border border-slate-700 px-3 py-1.5 text-xs text-slate-300" aria-pressed="false">VAT</button><button type="button" class="tax-duty-tag rounded-full border border-slate-700 px-3 py-1.5 text-xs text-slate-300" aria-pressed="false">Sales Tax</button><button type="button" class="tax-duty-tag rounded-full border border-slate-700 px-3 py-1.5 text-xs text-slate-300" aria-pressed="false">GST</button></div></div>
+                            <div><p class="text-xs uppercase tracking-[0.25em] text-slate-500 mb-3">TRADE &amp; EXPORT</p><div class="flex flex-wrap gap-2"><button type="button" class="tax-duty-tag rounded-full border border-slate-700 px-3 py-1.5 text-xs text-slate-300" aria-pressed="false">Import Duty</button><button type="button" class="tax-duty-tag rounded-full border border-slate-700 px-3 py-1.5 text-xs text-slate-300" aria-pressed="false">Customs Tariff</button><button type="button" class="tax-duty-tag rounded-full border border-slate-700 px-3 py-1.5 text-xs text-slate-300" aria-pressed="false">Excise Duty</button><button type="button" class="tax-duty-tag rounded-full border border-slate-700 px-3 py-1.5 text-xs text-slate-300" aria-pressed="false">Withholding Tax</button><button type="button" class="tax-duty-tag rounded-full border border-slate-700 px-3 py-1.5 text-xs text-slate-300" aria-pressed="false">Stamp Duty</button><button type="button" class="tax-duty-tag rounded-full border border-slate-700 px-3 py-1.5 text-xs text-slate-300" aria-pressed="false">Environmental Levy</button></div></div>
+                            <div><p class="text-xs uppercase tracking-[0.25em] text-slate-500 mb-3">LOGISTICS</p><div class="flex flex-wrap gap-2"><button type="button" class="tax-duty-tag rounded-full border border-slate-700 px-3 py-1.5 text-xs text-slate-300" aria-pressed="false">Port Handling Fee</button><button type="button" class="tax-duty-tag rounded-full border border-slate-700 px-3 py-1.5 text-xs text-slate-300" aria-pressed="false">Inspection Fee</button><button type="button" class="tax-duty-tag rounded-full border border-slate-700 px-3 py-1.5 text-xs text-slate-300" aria-pressed="false">Clearing Agent Fee</button></div></div>
+                        </div>
+                        <p id="tax-duty-helper" class="text-sm text-slate-400">No taxes or duties added. Tap a preset or add a custom line item.</p>
+                    </div>
+                </div>
+
+                <section id="tax-jurisdiction-filing-facts" class="space-y-4">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-scale-balanced text-emerald-400"></i>
+                        <h2 class="text-2xl font-bold text-slate-100">TAX JURISDICTION &amp; FILING FACTS</h2>
+                    </div>
+                    <div class="bg-slate-900/60 rounded-2xl border border-slate-800 p-5 space-y-4">
+                        <p class="text-sm leading-relaxed text-slate-400">These decide whose tax applies, when it becomes due, and in which currency it is accounted for. Strict jurisdictions reject an invoice that leaves them blank.</p>
+
+                        <label class="block text-sm text-slate-300"><span class="flex items-center gap-2"><i class="fa-solid fa-globe text-emerald-400"></i>Place of supply</span>
+                            <select class="settings-input mt-2" aria-label="Place of supply"><option selected>UKRAINE</option><option>GHANA</option><option>UNITED KINGDOM</option><option>UNITED STATES</option></select>
+                        </label>
+
+                        <div class="space-y-2">
+                            <label class="flex items-center gap-2 text-sm text-slate-300"><i class="fa-solid fa-calendar-days text-emerald-400"></i>Tax point (when tax becomes due)</label>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><select class="settings-input" aria-label="Tax point rule"><option selected>Payment date</option><option>Invoice date</option><option>Delivery date</option></select><input type="date" value="2026-09-20" class="settings-input" aria-label="Tax point date"></div>
+                            <p class="text-xs text-slate-500">Cash accounting — tax becomes due when the buyer pays.</p>
+                        </div>
+
+                        <label class="flex items-center justify-between gap-4 border-t border-slate-800/70 pt-4 text-sm text-slate-200 cursor-pointer"><span>Restate tax in a local accounting currency</span><span class="relative inline-flex items-center"><input id="restate-tax-toggle" type="checkbox" class="sr-only peer tax-jurisdiction-toggle" aria-checked="false"><span class="w-11 h-6 rounded-full bg-slate-700 peer-checked:bg-emerald-500 transition-colors"></span><span class="absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-transform peer-checked:translate-x-5"></span></span></label>
+
+                        <div class="border-t border-slate-800/70 pt-4 space-y-2">
+                            <div class="flex items-center justify-between gap-4"><div class="flex items-center gap-2 text-sm text-slate-200"><i class="fa-solid fa-shield-check text-emerald-400"></i><span>Buyer tax registration</span></div><button id="verify-buyer-tax-btn" type="button" class="inline-flex items-center gap-2 rounded-full border border-slate-700 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:border-emerald-400 hover:text-emerald-300"><span class="inline-flex h-4 w-4 items-center justify-center rounded-full bg-slate-700 text-[10px]">✓</span>Verify</button></div>
+                            <p id="buyer-tax-registration-status" class="text-xs text-slate-500">Not checked yet. A registry check is what actually certifies the number as active.</p>
+                        </div>
+
+                        <label class="flex items-center justify-between gap-4 border-t border-slate-800/70 pt-4 text-sm text-slate-200 cursor-pointer"><span class="flex items-center gap-2"><i class="fa-regular fa-file-lines text-emerald-400"></i>Self-billed by the buyer</span><span class="relative inline-flex items-center"><input id="self-billed-toggle" type="checkbox" class="sr-only peer tax-jurisdiction-toggle" aria-checked="false"><span class="w-11 h-6 rounded-full bg-slate-700 peer-checked:bg-emerald-500 transition-colors"></span><span class="absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-transform peer-checked:translate-x-5"></span></span></label>
+                    </div>
+                </section>
+
+                <section id="direct-link-contract-instruments" class="space-y-4">
+                    <div class="bg-slate-900/60 rounded-2xl border border-slate-800 p-5 space-y-4">
+                        <div class="flex items-center justify-between gap-4"><h2 class="text-xl font-bold text-slate-100">Contract instruments</h2><span class="rounded-full border border-slate-700 px-3 py-1 text-xs text-slate-400">Optional</span></div>
+                        <label class="flex items-center justify-between gap-4 text-sm text-slate-200 cursor-pointer"><span>Advance / mobilisation payment</span><span class="relative inline-flex items-center"><input id="contract-advance-toggle" type="checkbox" class="sr-only peer contract-instrument-toggle" aria-checked="false"><span class="w-11 h-6 rounded-full bg-slate-700 peer-checked:bg-emerald-500 transition-colors"></span><span class="absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-transform peer-checked:translate-x-5"></span></span></label>
+                        <label class="flex items-center justify-between gap-4 text-sm text-slate-200 cursor-pointer"><span>Liquidated damages for delay</span><span class="relative inline-flex items-center"><input id="contract-damages-toggle" type="checkbox" class="sr-only peer contract-instrument-toggle" aria-checked="false"><span class="w-11 h-6 rounded-full bg-slate-700 peer-checked:bg-emerald-500 transition-colors"></span><span class="absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-transform peer-checked:translate-x-5"></span></span></label>
+                        <div class="flex items-center justify-between gap-4 text-sm text-slate-200"><span>Quoted but excluded from escrow</span><button type="button" class="contract-instrument-add rounded-full border border-slate-700 px-3 py-1.5 text-xs text-slate-300 hover:border-emerald-400 hover:text-emerald-300">+ Add</button></div>
+                        <label class="flex items-center justify-between gap-4 text-sm text-slate-200 cursor-pointer"><span>Price adjustment against a published index</span><span class="relative inline-flex items-center"><input id="contract-index-toggle" type="checkbox" class="sr-only peer contract-instrument-toggle" aria-checked="false"><span class="w-11 h-6 rounded-full bg-slate-700 peer-checked:bg-emerald-500 transition-colors"></span><span class="absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-transform peer-checked:translate-x-5"></span></span></label>
+                        <div class="flex items-center justify-between gap-4 text-sm text-slate-200"><span>Contingency allowances (provisional sums)</span><button type="button" class="contract-instrument-add rounded-full border border-slate-700 px-3 py-1.5 text-xs text-slate-300 hover:border-emerald-400 hover:text-emerald-300">+ Add</button></div>
+                        <div class="flex items-center justify-between gap-4 text-sm text-slate-200"><span>Guarantees, bonds and letters of credit</span><button type="button" class="contract-instrument-add rounded-full border border-slate-700 px-3 py-1.5 text-xs text-slate-300 hover:border-emerald-400 hover:text-emerald-300">+ Add</button></div>
+                    </div>
+
+                    <div class="bg-slate-900/60 rounded-2xl border border-slate-800 p-5 space-y-2"><label for="buyer-note" class="block text-sm font-semibold text-slate-200">Note to buyer (optional)</label><textarea id="buyer-note" rows="3" class="settings-input" placeholder="Route, transhipment, free time, who clears customs at destination."></textarea></div>
+
+                    <div id="direct-link-validation-banner" class="border border-rose-500/40 bg-rose-950/20 rounded-2xl p-4 text-rose-300 space-y-2">
+                        <div class="flex items-center justify-between gap-4 text-sm font-semibold"><span>⚠️ 6 things still needed</span><button id="next-red-field-btn" type="button" class="underline text-rose-400 hover:text-rose-300">Take me to the next red field</button></div>
+                        <ul class="text-sm space-y-1"><li>• Describe this consignment</li><li>• Set a price above zero</li><li>• Milestone percentages must total exactly 100%</li><li>• Enter your registered legal name</li><li>• Enter the your street address</li><li>• Enter the your city / town</li></ul>
+                        <p class="text-xs text-rose-300/70">Every field that still needs you is outlined in red on the form itself.</p>
+                    </div>
+
+                    <button id="generate-payment-link-btn" type="button" disabled class="w-full rounded-xl bg-emerald-500/30 px-5 py-3.5 text-sm font-bold text-emerald-100 opacity-60 cursor-not-allowed">Generate Payment Link →</button>
+                </section>
+            </section>
 
         </div>
 
@@ -1519,415 +1854,273 @@
         </div>
 
         <!-- ============================================================
-             ANALYTICS & REPORTS VIEW — hidden by default, toggled via sidebar
+             PROOF EXPLORER VIEW — hidden by default, toggled via sidebar
              ============================================================ -->
-        <div id="analytics-reports-view" class="hidden w-full flex-1 flex flex-col space-y-6">
-
-            <!-- Dynamic Section Sub-Tabs Bar -->
-            <div class="bg-slate-900/30 border border-slate-800/50 p-1.5 rounded-xl flex items-center space-x-2 w-max">
-                <button class="analytics-hub-tab cursor-pointer bg-slate-800 text-slate-100 font-semibold rounded-lg px-4 py-2 text-sm">📈 Analytics</button>
-                <button class="analytics-hub-tab cursor-pointer text-slate-400 hover:text-slate-200 px-4 py-2 text-sm">⚙️ Widget</button>
-                <button class="analytics-hub-tab cursor-pointer text-slate-400 hover:text-slate-200 px-4 py-2 text-sm">📊 Reports</button>
-                <button class="analytics-hub-tab cursor-pointer text-slate-400 hover:text-slate-200 px-4 py-2 text-sm">🗄️ Archives</button>
+        <div id="proof-explorer-view" class="hidden w-full flex-1 flex flex-col space-y-6">
+            <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-6 shadow-xl">
+                <div class="flex items-start gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-300 flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-100">Blockchain Proof Lookup</h2>
+                        <p class="text-sm text-slate-400 mt-1">Enter a transaction ID to view its full on-chain proof chain and download a tamper-proof certificate.</p>
+                    </div>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-3 mt-6">
+                    <input id="proof-tx-input" type="text" placeholder="Transaction ID (UUID)" class="flex-1 bg-slate-950/60 border border-slate-800/60 text-slate-200 px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:border-emerald-500/50 placeholder:text-slate-500">
+                    <button id="proof-lookup-btn" type="button" class="bg-emerald-600 hover:bg-emerald-500 text-slate-100 font-semibold px-5 py-2.5 rounded-lg flex items-center justify-center gap-2 transition-colors cursor-pointer">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <span>Lookup</span>
+                    </button>
+                </div>
             </div>
-
-            <!-- Date Filter Strip -->
-            <div class="flex items-center space-x-3">
-                <i class="fa-regular fa-calendar text-slate-400"></i>
-                <input type="date" value="2026-01-01" class="bg-slate-950/60 border border-slate-800/60 text-slate-300 px-4 py-2 rounded-lg text-sm focus:outline-none focus:border-emerald-500/50">
-                <span class="text-slate-400 text-sm">to</span>
-                <input type="date" value="2026-06-04" class="bg-slate-950/60 border border-slate-800/60 text-slate-300 px-4 py-2 rounded-lg text-sm focus:outline-none focus:border-emerald-500/50">
-            </div>
-
-            <!-- ANALYTICS DEFAULT PANEL (Analytics sub-tab) -->
-            <div id="analytics-panel-default" class="space-y-6 flex flex-col w-full">
-
-                <!-- Primary Metrics Grid (4-Column Layout Row) -->
-                <div class="flex flex-wrap gap-4">
-                    <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5 space-y-1 flex-1 min-w-[180px]">
-                        <div class="flex items-center space-x-2 text-slate-500 text-xs uppercase tracking-wider">
-                            <i class="fa-solid fa-dollar-sign"></i>
-                            <span>Total Revenue</span>
-                        </div>
-                        <p class="text-2xl font-bold text-slate-100">$2,870</p>
-                    </div>
-                    <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5 space-y-1 flex-1 min-w-[180px]">
-                        <div class="flex items-center space-x-2 text-slate-500 text-xs uppercase tracking-wider">
-                            <i class="fa-solid fa-box"></i>
-                            <span>Total Orders</span>
-                        </div>
-                        <p class="text-2xl font-bold text-slate-100">4</p>
-                    </div>
-                    <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5 space-y-1 flex-1 min-w-[180px]">
-                        <div class="flex items-center space-x-2 text-slate-500 text-xs uppercase tracking-wider">
-                            <i class="fa-solid fa-chart-line"></i>
-                            <span>Avg Order Value</span>
-                        </div>
-                        <p class="text-2xl font-bold text-slate-100">$718</p>
-                    </div>
-                    <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5 space-y-1 flex-1 min-w-[180px]">
-                        <div class="flex items-center space-x-2 text-slate-500 text-xs uppercase tracking-wider">
-                            <i class="fa-regular fa-clock"></i>
-                            <span>Avg Escrow Duration</span>
-                        </div>
-                        <p class="text-2xl font-bold text-slate-100">0d avg</p>
-                    </div>
-                </div>
-
-                <!-- Data Visualization Split Canvas Grid (2 Columns) -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Left Panel: Revenue Trend Card -->
-                    <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-6 h-80 flex flex-col justify-between">
-                        <p class="text-slate-200 font-bold">Revenue Trend</p>
-                        <div class="flex-1 flex items-center justify-center relative">
-                            <svg class="w-full h-full max-h-[200px]" viewBox="0 0 300 160" preserveAspectRatio="none">
-                                <line x1="0" y1="0" x2="300" y2="0" stroke="#334155" stroke-width="0.5" stroke-dasharray="4,4"/>
-                                <line x1="0" y1="40" x2="300" y2="40" stroke="#334155" stroke-width="0.5" stroke-dasharray="4,4"/>
-                                <line x1="0" y1="80" x2="300" y2="80" stroke="#334155" stroke-width="0.5" stroke-dasharray="4,4"/>
-                                <line x1="0" y1="120" x2="300" y2="120" stroke="#334155" stroke-width="0.5" stroke-dasharray="4,4"/>
-                                <line x1="0" y1="160" x2="300" y2="160" stroke="#334155" stroke-width="0.5"/>
-                                <text x="4" y="14" fill="#64748b" font-size="8">$3k</text>
-                                <text x="4" y="54" fill="#64748b" font-size="8">$2k</text>
-                                <text x="4" y="94" fill="#64748b" font-size="8">$1k</text>
-                                <text x="4" y="134" fill="#64748b" font-size="8">$0k</text>
-                                <text x="145" y="156" fill="#64748b" font-size="9" text-anchor="middle">Jul</text>
-                                <polyline points="0,130 60,100 120,80 180,60 240,40 300,35" fill="none" stroke="#34d399" stroke-width="2"/>
-                                <circle cx="300" cy="35" r="4" fill="#34d399" stroke="#05070f" stroke-width="2"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <!-- Right Panel: Escrow Flow Card -->
-                    <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-6 h-80 flex flex-col justify-between">
-                        <p class="text-slate-200 font-bold">Escrow Flow</p>
-                        <div class="flex-1 flex items-center justify-center relative">
-                            <svg class="w-full h-full max-h-[200px]" viewBox="0 0 300 160" preserveAspectRatio="none">
-                                <line x1="0" y1="0" x2="300" y2="0" stroke="#334155" stroke-width="0.5" stroke-dasharray="4,4"/>
-                                <line x1="0" y1="40" x2="300" y2="40" stroke="#334155" stroke-width="0.5" stroke-dasharray="4,4"/>
-                                <line x1="0" y1="80" x2="300" y2="80" stroke="#334155" stroke-width="0.5" stroke-dasharray="4,4"/>
-                                <line x1="0" y1="120" x2="300" y2="120" stroke="#334155" stroke-width="0.5" stroke-dasharray="4,4"/>
-                                <line x1="0" y1="160" x2="300" y2="160" stroke="#334155" stroke-width="0.5"/>
-                                <text x="4" y="14" fill="#64748b" font-size="8">$3k</text>
-                                <text x="4" y="54" fill="#64748b" font-size="8">$2k</text>
-                                <text x="4" y="94" fill="#64748b" font-size="8">$1k</text>
-                                <text x="4" y="134" fill="#64748b" font-size="8">$0k</text>
-                                <text x="145" y="156" fill="#64748b" font-size="9" text-anchor="middle">Jul</text>
-                                <rect x="80" y="50" width="40" height="110" fill="#f59e0b" rx="3"/>
-                                <rect x="170" y="100" width="40" height="60" fill="#34d399" rx="3"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- WIDGET PANEL (Widget sub-tab) -->
-            <div id="analytics-panel-widget" class="hidden space-y-6 flex flex-col w-full">
-
-                <!-- Conversion Funnel Metrics Bar Grid (4 Columns) -->
-                <div class="flex flex-wrap gap-4">
-                    <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5 space-y-1 flex-1 min-w-[180px]">
-                        <div class="flex items-center space-x-2 text-slate-500 text-xs uppercase tracking-wider">
-                            <i class="fa-regular fa-eye"></i>
-                            <span>Impressions</span>
-                        </div>
-                        <p class="text-2xl font-bold text-slate-100">0</p>
-                        <p class="text-slate-500 text-xs">0 unique visitors</p>
-                    </div>
-                    <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5 space-y-1 flex-1 min-w-[180px]">
-                        <div class="flex items-center space-x-2 text-slate-500 text-xs uppercase tracking-wider">
-                            <i class="fa-solid fa-pointer"></i>
-                            <span>Widget Opens</span>
-                        </div>
-                        <p class="text-2xl font-bold text-slate-100">0</p>
-                        <p class="text-slate-500 text-xs">0% open rate</p>
-                    </div>
-                    <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5 space-y-1 flex-1 min-w-[180px]">
-                        <div class="flex items-center space-x-2 text-slate-500 text-xs uppercase tracking-wider">
-                            <i class="fa-solid fa-cart-shopping"></i>
-                            <span>Checkout Starts</span>
-                        </div>
-                        <p class="text-2xl font-bold text-slate-100">0</p>
-                        <p class="text-slate-500 text-xs">—</p>
-                    </div>
-                    <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5 space-y-1 flex-1 min-w-[180px]">
-                        <div class="flex items-center space-x-2 text-slate-500 text-xs uppercase tracking-wider">
-                            <i class="fa-solid fa-circle-check"></i>
-                            <span>Payments</span>
-                        </div>
-                        <p class="text-2xl font-bold text-slate-100">0</p>
-                        <p class="text-slate-500 text-xs">0% conversion</p>
-                    </div>
-                </div>
-
-            <!-- Core Operations Empty State Panel -->
-                <div class="bg-slate-900/20 border border-slate-800/40 rounded-xl p-16 flex flex-col items-center justify-center text-center mt-4">
-                    <i class="fa-solid fa-gauge-high text-slate-600 text-5xl"></i>
-                    <p class="text-slate-300 font-bold text-base mt-3">No widget data yet</p>
-                    <p class="text-slate-500 text-sm mt-1">Analytics will appear here once your TrustLock widget is embedded on a site and receives traffic.</p>
-                </div>
-
-            </div>
-
-            <!-- REPORTS PANEL (Reports sub-tab) -->
-            <div id="analytics-panel-reports" class="hidden space-y-6 flex flex-col w-full">
-
-                <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-cart-shopping text-slate-400"></i>
-                    <span class="text-slate-200 font-bold text-base">Premium Reports & Documents</span>
-                </div>
-                <p class="text-slate-400 text-sm -mt-4">Select a document to purchase. Access is valid for 30 days after payment. Documents update with latest data.</p>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-
-                    <!-- Product 1: Tax Audit Report -->
-                    <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5 flex items-center justify-between hover:border-slate-700/80 transition-all cursor-pointer">
-                        <div class="flex items-center space-x-3">
-                            <i class="fa-solid fa-file-invoice text-slate-500 text-xl"></i>
-                            <div>
-                                <p class="text-slate-200 font-semibold">Tax Audit Report</p>
-                                <p class="text-slate-500 text-xs">Complete tax breakdown, VAT/GST summary, and compliance auditing tools.</p>
-                                <span class="inline-block mt-1 bg-slate-800/60 text-slate-400 text-[10px] px-2 py-0.5 rounded-full">$2.00 // 30-day access</span>
-                            </div>
-                        </div>
-                        <div class="flex flex-col items-center space-y-1">
-                            <i class="fa-solid fa-lock text-slate-500"></i>
-                            <span class="text-slate-400 text-xs">Click to Purchase</span>
-                            <span class="bg-slate-800/60 text-slate-200 text-xs font-bold px-3 py-1 rounded-full">$2.00</span>
-                        </div>
-                    </div>
-
-                    <!-- Product 2: Bill Payments Summary -->
-                    <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5 flex items-center justify-between hover:border-slate-700/80 transition-all cursor-pointer">
-                        <div class="flex items-center space-x-3">
-                            <i class="fa-solid fa-receipt text-slate-500 text-xl"></i>
-                            <div>
-                                <p class="text-slate-200 font-semibold">Bill Payments Summary</p>
-                                <p class="text-slate-500 text-xs">Detailed history of all bill payments, OS Pay transactions, and platform deductions.</p>
-                                <span class="inline-block mt-1 bg-slate-800/60 text-slate-400 text-[10px] px-2 py-0.5 rounded-full">$1.50 // 30-day access</span>
-                            </div>
-                        </div>
-                        <div class="flex flex-col items-center space-y-1">
-                            <i class="fa-solid fa-lock text-slate-500"></i>
-                            <span class="text-slate-400 text-xs">Click to Purchase</span>
-                            <span class="bg-slate-800/60 text-slate-200 text-xs font-bold px-3 py-1 rounded-full">$1.50</span>
-                        </div>
-                    </div>
-
-                    <!-- Product 3: Transaction History Export -->
-                    <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5 flex items-center justify-between hover:border-slate-700/80 transition-all cursor-pointer">
-                        <div class="flex items-center space-x-3">
-                            <i class="fa-solid fa-file-export text-slate-500 text-xl"></i>
-                            <div>
-                                <p class="text-slate-200 font-semibold">Transaction History Export</p>
-                                <p class="text-slate-500 text-xs">Full CSV/PDF export of all orders with status, amounts, dates, and cryptographic hashes.</p>
-                                <span class="inline-block mt-1 bg-slate-800/60 text-slate-400 text-[10px] px-2 py-0.5 rounded-full">$1.00 // 30-day access</span>
-                            </div>
-                        </div>
-                        <div class="flex flex-col items-center space-y-1">
-                            <i class="fa-solid fa-lock text-slate-500"></i>
-                            <span class="text-slate-400 text-xs">Click to Purchase</span>
-                            <span class="bg-slate-800/60 text-slate-200 text-xs font-bold px-3 py-1 rounded-full">$1.00</span>
-                        </div>
-                    </div>
-
-                    <!-- Product 4: Payout Reconciliation Report -->
-                    <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5 flex items-center justify-between hover:border-slate-700/80 transition-all cursor-pointer">
-                        <div class="flex items-center space-x-3">
-                            <i class="fa-solid fa-scale-balanced text-slate-500 text-xl"></i>
-                            <div>
-                                <p class="text-slate-200 font-semibold">Payout Reconciliation Report</p>
-                                <p class="text-slate-500 text-xs">Detailed payout settlement report with processor fees, net amounts, and bank reference codes.</p>
-                                <span class="inline-block mt-1 bg-slate-800/60 text-slate-400 text-[10px] px-2 py-0.5 rounded-full">$2.00 // 30-day access</span>
-                            </div>
-                        </div>
-                        <div class="flex flex-col items-center space-y-1">
-                            <i class="fa-solid fa-lock text-slate-500"></i>
-                            <span class="text-slate-400 text-xs">Click to Purchase</span>
-                            <span class="bg-slate-800/60 text-slate-200 text-xs font-bold px-3 py-1 rounded-full">$2.00</span>
-                        </div>
-                    </div>
-
-                    <!-- Product 5: Revenue Statement -->
-                    <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5 flex items-center justify-between hover:border-slate-700/80 transition-all cursor-pointer">
-                        <div class="flex items-center space-x-3">
-                            <i class="fa-solid fa-chart-simple text-slate-500 text-xl"></i>
-                            <div>
-                                <p class="text-slate-200 font-semibold">Revenue Statement</p>
-                                <p class="text-slate-500 text-xs">Monthly/quarterly revenue breakdown with escrow details, fees, and growth metrics.</p>
-                                <span class="inline-block mt-1 bg-slate-800/60 text-slate-400 text-[10px] px-2 py-0.5 rounded-full">$1.50 // 30-day access</span>
-                            </div>
-                        </div>
-                        <div class="flex flex-col items-center space-y-1">
-                            <i class="fa-solid fa-lock text-slate-500"></i>
-                            <span class="text-slate-400 text-xs">Click to Purchase</span>
-                            <span class="bg-slate-800/60 text-slate-200 text-xs font-bold px-3 py-1 rounded-full">$1.50</span>
-                        </div>
-                    </div>
-
-                    <!-- Product 6: Compliance Certificate -->
-                    <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5 flex items-center justify-between hover:border-slate-700/80 transition-all cursor-pointer">
-                        <div class="flex items-center space-x-3">
-                            <i class="fa-solid fa-certificate text-slate-500 text-xl"></i>
-                            <div>
-                                <p class="text-slate-200 font-semibold">Compliance Certificate</p>
-                                <p class="text-slate-500 text-xs">AML/KYC compliance summary and sanctions screening status for ledger audits.</p>
-                                <span class="inline-block mt-1 bg-slate-800/60 text-slate-400 text-[10px] px-2 py-0.5 rounded-full">$2.50 // 30-day access</span>
-                            </div>
-                        </div>
-                        <div class="flex flex-col items-center space-y-1">
-                            <i class="fa-solid fa-lock text-slate-500"></i>
-                            <span class="text-slate-400 text-xs">Click to Purchase</span>
-                            <span class="bg-slate-800/60 text-slate-200 text-xs font-bold px-3 py-1 rounded-full">$2.50</span>
-                        </div>
-                    </div>
-
-                </div>
-
-                <p class="text-slate-500 text-xs text-center w-full mt-4">Documents refresh with latest data on each access cycle. After 30 days, re-purchase to access updated reports.</p>
-
-            </div>
-
-            <!-- ARCHIVES PANEL (Archives sub-tab) -->
-            <div id="analytics-panel-archives" class="hidden space-y-6 flex flex-col w-full">
-
-                <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-box-archive text-slate-400"></i>
-                    <span class="text-slate-200 font-bold text-base">Report Archives</span>
-                </div>
-                <p class="text-slate-500 text-xs -mt-3">Reports are auto-archived after 90 days. Deleted permanently after 12 months.</p>
-
-                <div class="flex flex-wrap items-center gap-4 mt-4 w-full">
-                    <div class="flex-1 min-w-[200px]">
-                        <input type="search" placeholder="🔍 Search by name or date..."
-                               class="w-full bg-slate-900/50 border border-slate-800/60 text-slate-200 px-4 py-2.5 rounded-lg focus:outline-none focus:border-emerald-500/50 placeholder:text-slate-500">
-                    </div>
-                    <input type="date" value="2026-01-01" class="bg-slate-900/50 border border-slate-800/60 text-slate-200 px-4 py-2.5 rounded-lg focus:outline-none focus:border-emerald-500/50">
-                    <input type="date" value="2026-06-04" class="bg-slate-900/50 border border-slate-800/60 text-slate-200 px-4 py-2.5 rounded-lg focus:outline-none focus:border-emerald-500/50">
-                </div>
-
-                <div class="bg-slate-900/20 border border-slate-800/40 rounded-xl p-12 text-center text-slate-500 text-sm mt-4">
-                    No archived report history discovered within the selected date metrics window.
-                </div>
-
-            </div>
-
         </div>
 
-        </div><!-- end inner scroll wrapper -->
-        </main>
-    </div>
-
-    <!-- ============================================================
-         TRUSTLOCK INVOICE GENERATOR MODAL OVERLAY DRAWER
-         ============================================================ -->
-    <div id="invoice-generator-drawer" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-        <div class="bg-[#0a0f1d] border border-slate-800 rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-
-            <!-- Header Bar -->
-            <div class="bg-emerald-800/80 px-4 py-3 text-slate-100 flex justify-between items-center rounded-t-xl">
-                <span class="text-sm font-bold">🛡️ TrustLock Invoice</span>
-                <span class="text-[11px] bg-slate-950/40 px-2 py-0.5 rounded-full text-slate-300">📄 Draft</span>
-            </div>
-
-            <div class="p-5 space-y-4">
-
-                <!-- Meta Section -->
-                <div class="text-xs text-slate-400">
-                    Invoice from <span class="text-slate-200 font-semibold">blah blah</span> // INV-2026-4390
-                </div>
-
-                <!-- Fields Segment -->
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs text-slate-500 mb-1">Industry</label>
-                        <select class="w-full bg-slate-950/60 border border-slate-800/60 text-slate-300 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-emerald-500/50">
-                            <option selected>Other / General</option>
-                            <option>Textiles & Apparel</option>
-                            <option>Construction</option>
-                            <option>Real Estate</option>
-                            <option>Mining & Minerals</option>
-                            <option>Agriculture & Export</option>
-                            <option>Freelance / Professional Services</option>
-                            <option>Logistics & Cross-Border Trade</option>
-                            <option>Energy / Oil & Gas</option>
-                            <option>Manufacturing & Equipment</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-500 mb-1">Currency</label>
-                        <select class="w-full bg-slate-950/60 border border-slate-800/60 text-slate-300 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-emerald-500/50">
-                            <option value="USD" selected>USD — US Dollar</option>
-                            <option value="EUR">EUR — Euro</option>
-                            <option value="GBP">GBP — British Pound</option>
-                            <option value="USDC">USDC — USD Coin</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs text-slate-500 mb-1">Delivery Terms</label>
-                    <input type="text" placeholder="e.g. 30 days after payment"
-                           class="w-full bg-slate-950/60 border border-slate-800/60 text-slate-200 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-emerald-500/50 placeholder:text-slate-500">
-                </div>
-
-                <!-- Items Card -->
-                <div class="bg-slate-950/40 border border-slate-800/60 rounded-lg p-3 space-y-3">
-                    <p class="text-xs uppercase tracking-wider text-slate-500 font-semibold">Item</p>
-                    <div>
-                        <label class="block text-[11px] text-slate-500 mb-1">Description</label>
-                        <input type="text" id="invoice-item-desc" placeholder="e.g. Web development retainer"
-                               class="w-full bg-slate-950/60 border border-slate-800/60 text-slate-200 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-emerald-500/50 placeholder:text-slate-500">
-                    </div>
-                    <div class="grid grid-cols-3 gap-2">
-                        <div>
-                            <label class="block text-[11px] text-slate-500 mb-1">Qty</label>
-                            <input type="number" min="1" value="1"
-                                   class="w-full bg-slate-950/60 border border-slate-800/60 text-slate-200 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-emerald-500/50">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] text-slate-500 mb-1">Unit</label>
-                            <select class="w-full bg-slate-950/60 border border-slate-800/60 text-slate-300 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-emerald-500/50">
-                                <option>Units</option>
-                                <option>Hours</option>
-                                <option>Days</option>
-                                <option>Months</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-[11px] text-slate-500 mb-1">Price (USD)</label>
-                            <input type="number" id="invoice-item-price" min="0" step="0.01" placeholder="0.00"
-                                   class="w-full bg-slate-950/60 border border-slate-800/60 text-slate-200 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-emerald-500/50 placeholder:text-slate-500">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Payment Method Toggle -->
-                <div>
-                    <label class="block text-xs text-slate-500 mb-2">Payment Method</label>
-                    <div class="flex gap-2">
-                        <button type="button" class="flex-1 px-3 py-2 rounded-lg bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 text-sm font-medium transition-colors cursor-pointer">
-                            💳 Fiat (Card / Bank)
-                        </button>
-                        <button type="button" class="flex-1 px-3 py-2 rounded-lg bg-slate-950/60 text-slate-400 border border-slate-800/60 text-sm font-medium hover:border-slate-600 transition-colors cursor-pointer">
-                            📁 Crypto (USDC/USDT)
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Note to Buyer -->
-                <div>
-                    <label class="block text-xs text-slate-500 mb-1">Note to Buyer</label>
-                    <textarea rows="3" placeholder="Add a personal message or instructions..."
-                              class="w-full bg-slate-950/60 border border-slate-800/60 text-slate-200 px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-emerald-500/50 placeholder:text-slate-500 resize-y"></textarea>
-                </div>
-
-                <!-- Generate Button -->
-                <button type="button" id="submit-payment-link-generation" class="bg-slate-500 text-slate-200 cursor-not-allowed w-full py-3 rounded-lg font-bold transition-all mt-4">
-                    Generate Payment Link
+        <!-- ============================================================
+             MESSAGES VIEW — hidden by default, toggled via sidebar
+             ============================================================ -->
+        <div id="messages-view" class="hidden w-full flex-1 flex flex-col space-y-6">
+            <div class="flex items-center justify-between gap-4 flex-wrap">
+                <h2 class="text-2xl font-bold text-slate-100">Inbox</h2>
+                <button id="new-message-btn" type="button" class="bg-emerald-600 hover:bg-emerald-500 text-slate-100 font-semibold px-5 py-2.5 rounded-lg flex items-center gap-2 transition-colors cursor-pointer">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>New Message</span>
                 </button>
+            </div>
 
+            <div class="flex items-center justify-between gap-4 flex-wrap">
+                <div class="flex items-center gap-2">
+                    <button type="button" aria-label="Select messages" class="w-9 h-9 rounded-lg bg-slate-950/60 border border-slate-800/60 text-slate-400 hover:text-slate-200 hover:border-slate-600 transition-colors">
+                        <i class="fa-regular fa-circle"></i>
+                    </button>
+                    <button type="button" aria-label="Refresh messages" class="w-9 h-9 rounded-lg bg-slate-950/60 border border-slate-800/60 text-slate-400 hover:text-slate-200 hover:border-slate-600 transition-colors">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
+                <div class="flex items-center gap-3 flex-wrap">
+                    <input type="search" placeholder="Search mail" class="bg-slate-950/60 border border-slate-800/60 text-slate-200 px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:border-emerald-500/50 placeholder:text-slate-500">
+                    <button type="button" class="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-slate-950/60 border border-slate-800/60 text-slate-300 text-sm hover:border-slate-600 transition-colors">
+                        <i class="fa-solid fa-box-archive"></i>
+                        <span>Archived</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-12 flex flex-col items-center justify-center text-center shadow-xl">
+                <h3 class="text-lg font-bold text-slate-200">No messages yet</h3>
+                <p class="text-sm text-slate-400 mt-2">Start a conversation using the 'New Message' button</p>
+                <button id="open-support-modal-btn" type="button" class="mt-5 bg-emerald-600 hover:bg-emerald-500 text-slate-100 font-semibold px-5 py-2.5 rounded-lg flex items-center gap-2 transition-colors cursor-pointer">
+                    <i class="fa-solid fa-life-ring"></i>
+                    <span>Contact EscrowSonnet Support</span>
+                </button>
             </div>
         </div>
+
+        <div id="support-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+            <div class="bg-[#0a0f1d] border border-slate-800 rounded-2xl p-6 w-full max-w-lg shadow-2xl relative">
+                <button id="close-support-modal-btn" type="button" aria-label="Close support modal" class="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors">
+                    ✕
+                </button>
+                <div class="flex items-center gap-3 pr-8">
+                    <i class="fa-solid fa-life-ring text-emerald-400 text-xl"></i>
+                    <h2 class="text-xl font-bold text-slate-100">Contact EscrowSonnet Support</h2>
+                </div>
+                <p class="text-sm text-slate-400 mt-3">Messages go straight to the admin support desk. Replies land in your in-app inbox — no external email needed.</p>
+
+                <div class="space-y-4 mt-6">
+                    <div>
+                        <label for="support-topic" class="block text-sm font-medium text-slate-300 mb-2">What do you need help with?</label>
+                        <select id="support-topic" class="w-full bg-slate-950/60 border border-slate-800/60 text-slate-200 px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:border-emerald-500/50">
+                            <option>General support</option>
+                            <option>Billing or fees</option>
+                            <option>Order or dispute help</option>
+                            <option>Technical issue</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="support-subject" class="block text-sm font-medium text-slate-300 mb-2">Subject (optional)</label>
+                        <input id="support-subject" type="text" placeholder="e.g. Payout stuck on order TL-..." class="w-full bg-slate-950/60 border border-slate-800/60 text-slate-200 px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:border-emerald-500/50 placeholder:text-slate-500">
+                    </div>
+                    <div>
+                        <label for="support-message" class="block text-sm font-medium text-slate-300 mb-2">Message</label>
+                        <textarea id="support-message" rows="4" placeholder="Describe what's happening, including any order numbers, so we can help fast." class="w-full bg-slate-950/60 border border-slate-800/60 text-slate-200 px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:border-emerald-500/50 placeholder:text-slate-500 resize-y"></textarea>
+                    </div>
+                </div>
+
+                <p class="text-xs text-slate-500 mt-4">Attachments? Send the message first, then attach files from your inbox reply thread.</p>
+                <div class="flex items-center justify-end gap-3 mt-6">
+                    <button id="cancel-support-btn" type="button" class="px-4 py-2.5 rounded-lg border border-slate-800/60 text-slate-300 hover:border-slate-600 transition-colors">Cancel</button>
+                    <button id="send-support-btn" type="button" class="bg-emerald-600 hover:bg-emerald-500 text-slate-100 font-semibold px-5 py-2.5 rounded-lg transition-colors">Send to support</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             DISPUTES VIEW — hidden by default, toggled via sidebar
+             ============================================================ -->
+        <div id="disputes-view" class="hidden w-full flex-1 flex flex-col space-y-6">
+            <div class="flex items-start justify-between gap-4 flex-wrap">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-100">Your Disputes</h2>
+                    <p class="text-sm text-slate-400 mt-1">Track disputes you've filed or that buyers filed against you</p>
+                </div>
+                <button id="toggle-file-dispute-btn" type="button" class="bg-emerald-600 hover:bg-emerald-500 text-slate-100 font-semibold px-5 py-2.5 rounded-lg transition-colors cursor-pointer">⚠️ File Dispute</button>
+            </div>
+
+            <div id="file-dispute-card" class="hidden border border-slate-800 bg-slate-900/40 rounded-2xl p-6 space-y-4">
+                <h3 class="font-semibold text-slate-100">File a Dispute</h3>
+                <div>
+                    <label for="dispute-transaction-id" class="block text-sm font-medium text-slate-300 mb-2">Transaction ID</label>
+                    <input id="dispute-transaction-id" type="text" placeholder="e.g., TL-2026-XXXX" class="w-full bg-slate-950/60 border border-slate-800/60 text-slate-200 px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:border-emerald-500/50 placeholder:text-slate-500">
+                </div>
+                <div>
+                    <label for="dispute-reason" class="block text-sm font-medium text-slate-300 mb-2">Reason</label>
+                    <select id="dispute-reason" class="w-full bg-slate-950/60 border border-slate-800/60 text-slate-200 px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:border-emerald-500/50">
+                        <option>Payment not received despite escrow release</option>
+                        <option>Buyer refuses to confirm delivery</option>
+                        <option>Unjustified chargeback</option>
+                        <option>Buyer breached milestone terms</option>
+                        <option>Payment not received despite escrow release</option>
+                        <option>False claims by buyer</option>
+                        <option>Buyer abandoned order without cause</option>
+                         <option>Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="dispute-description" class="block text-sm font-medium text-slate-300 mb-2">Describe the issue</label>
+                    <textarea id="dispute-description" rows="4" placeholder="Provide details about what went wrong..." class="w-full bg-slate-950/60 border border-slate-800/60 text-slate-200 px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:border-emerald-500/50 placeholder:text-slate-500 resize-y"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">Evidence (optional)</label>
+                    <div class="border-2 border-dashed border-slate-700/70 rounded-xl p-6 flex flex-col items-center justify-center text-center">
+                        <i class="fa-solid fa-cloud-arrow-up text-emerald-400 text-2xl"></i>
+                        <p class="text-sm text-slate-400 mt-3">Drop photos, screenshots, or documents here</p>
+                        <button type="button" class="mt-3 px-4 py-2 rounded-lg border border-slate-700 text-slate-300 hover:border-slate-500 transition-colors">Browse Files</button>
+                    </div>
+                </div>
+                <div class="flex items-center justify-end gap-3 pt-2">
+                    <button type="button" class="bg-emerald-600 hover:bg-emerald-500 text-slate-100 font-semibold px-5 py-2.5 rounded-lg transition-colors">⚠️ Submit Dispute</button>
+                    <button id="cancel-dispute-btn" type="button" class="px-5 py-2.5 rounded-lg border border-slate-800/60 text-slate-300 hover:border-slate-600 transition-colors">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             HELP CENTER VIEW — hidden by default, toggled via sidebar
+             ============================================================ -->
+        <div id="help-center-view" class="hidden w-full flex-1 flex flex-col space-y-6">
+            <div class="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-6 shadow-xl">
+                <h2 class="text-2xl font-bold text-slate-100">Help Center &amp; Documentation</h2>
+                <p class="text-sm text-slate-400 mt-2">Find answers, escrow rules, and integration guides.</p>
+                <input type="search" placeholder="Search guides, fees, escrow rules, API docs..." class="w-full mt-5 bg-slate-950/60 border border-slate-800/60 text-slate-200 px-4 py-3 rounded-lg text-sm focus:outline-none focus:border-emerald-500/50 placeholder:text-slate-500">
+                <div class="flex flex-wrap gap-2 mt-4">
+                    <button type="button" class="rounded-full border border-slate-700/70 bg-slate-950/40 px-3 py-1.5 text-xs text-slate-300 hover:border-emerald-500/50 transition-colors">Escrow release timeline</button>
+                    <button type="button" class="rounded-full border border-slate-700/70 bg-slate-950/40 px-3 py-1.5 text-xs text-slate-300 hover:border-emerald-500/50 transition-colors">Dispute evidence</button>
+                    <button type="button" class="rounded-full border border-slate-700/70 bg-slate-950/40 px-3 py-1.5 text-xs text-slate-300 hover:border-emerald-500/50 transition-colors">Lender rates</button>
+                    <button type="button" class="rounded-full border border-slate-700/70 bg-slate-950/40 px-3 py-1.5 text-xs text-slate-300 hover:border-emerald-500/50 transition-colors">Widget integration</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5"><i class="fa-solid fa-lock text-emerald-400 text-xl"></i><h3 class="text-base font-semibold text-slate-100 mt-4">Escrow &amp; Milestones</h3><p class="text-sm text-slate-400 mt-2">Auto-release timers, inspection windows, fund locking.</p></div>
+                <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5"><i class="fa-solid fa-wallet text-emerald-400 text-xl"></i><h3 class="text-base font-semibold text-slate-100 mt-4">Payouts &amp; Fees</h3><p class="text-sm text-slate-400 mt-2">Fee simulator breakdown, withdrawal speeds, FX rates.</p></div>
+                <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5"><i class="fa-solid fa-building-columns text-emerald-400 text-xl"></i><h3 class="text-base font-semibold text-slate-100 mt-4">Trade Financing</h3><p class="text-sm text-slate-400 mt-2">Lender slices, repayment matching, milestone deductions.</p></div>
+                <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5"><i class="fa-solid fa-shield-halved text-emerald-400 text-xl"></i><h3 class="text-base font-semibold text-slate-100 mt-4">Disputes &amp; Claims</h3><p class="text-sm text-slate-400 mt-2">Evidence guidelines, mediation flow, chargeback rules.</p></div>
+                <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5"><i class="fa-solid fa-users text-emerald-400 text-xl"></i><h3 class="text-base font-semibold text-slate-100 mt-4">Network &amp; RFQs</h3><p class="text-sm text-slate-400 mt-2">Buyer verification, custom quote links, proposals.</p></div>
+                <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5"><i class="fa-solid fa-terminal text-emerald-400 text-xl"></i><h3 class="text-base font-semibold text-slate-100 mt-4">Security &amp; API</h3><p class="text-sm text-slate-400 mt-2">Embed widget setup, webhooks, on-chain proof lookup.</p></div>
+            </div>
+
+            
+            <div class="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-6">
+                <h3 class="text-lg font-semibold text-slate-100 mb-4">Frequently Asked Questions</h3>
+                <div class="divide-y divide-slate-800/60">
+                    <div class="help-faq-item"><button type="button" class="w-full flex items-center justify-between gap-4 py-4 text-left text-sm font-semibold text-slate-200"><span>What happens if a buyer refuses to confirm delivery?</span><i class="fa-solid fa-chevron-down help-faq-caret text-slate-400 transition-transform"></i></button><p class="help-faq-answer hidden pb-4 text-sm leading-relaxed text-slate-400">Escrow enters the default 14-day inspection window. If no dispute is filed with evidence, funds release automatically.</p></div>
+                    <div class="help-faq-item"><button type="button" class="w-full flex items-center justify-between gap-4 py-4 text-left text-sm font-semibold text-slate-200"><span>How does the 0.25% lender handling fee work?</span><i class="fa-solid fa-chevron-down help-faq-caret text-slate-400 transition-transform"></i></button><p class="help-faq-answer hidden pb-4 text-sm leading-relaxed text-slate-400">It is automatically routed from funded milestone releases via the smart contract router.</p></div>
+                    <div class="help-faq-item"><button type="button" class="w-full flex items-center justify-between gap-4 py-4 text-left text-sm font-semibold text-slate-200"><span>Can a Proforma Invoice be edited after funding?</span><i class="fa-solid fa-chevron-down help-faq-caret text-slate-400 transition-transform"></i></button><p class="help-faq-answer hidden pb-4 text-sm leading-relaxed text-slate-400">No. Funded invoices lock on-chain. Counter-proposals must be submitted as a new draft.</p></div>
+                    <div class="help-faq-item"><button type="button" class="w-full flex items-center justify-between gap-4 py-4 text-left text-sm font-semibold text-slate-200"><span>Where do I find on-chain proof certificates?</span><i class="fa-solid fa-chevron-down help-faq-caret text-slate-400 transition-transform"></i></button><p class="help-faq-answer hidden pb-4 text-sm leading-relaxed text-slate-400">Use the Proof Explorer under Tools &amp; Insights to view hashes and download certificates.</p></div>
+                </div>
+            </div>
+
+            <div class="bg-emerald-950/20 border border-emerald-800/40 rounded-2xl p-6 flex items-center justify-between gap-4 flex-wrap">
+                <h3 class="text-lg font-semibold text-slate-100">Still need assistance?</h3>
+                <div class="flex items-center gap-3 flex-wrap"><button id="help-contact-support-btn" type="button" class="bg-emerald-600 hover:bg-emerald-500 text-slate-100 font-semibold px-5 py-2.5 rounded-lg transition-colors">Contact EscrowSonnet Support</button><button id="help-file-dispute-btn" type="button" class="border border-slate-700 text-slate-300 hover:border-slate-500 px-5 py-2.5 rounded-lg transition-colors">File a Dispute</button></div>
+            </div>
+        </div>
+
+        <!-- ============================================================
+             SETTINGS VIEW — hidden by default, toggled via sidebar
+             ============================================================ -->
+        <div id="settings-view" class="hidden w-full flex-1 flex flex-col space-y-6">
+            <div class="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 text-amber-200">
+                <p class="font-semibold">⚠️ Complete your profile</p>
+                <p class="text-sm text-amber-100/70 mt-1">Add website/social link to maintain full account access.</p>
+            </div>
+
+            <div class="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-6 space-y-4">
+                <h2 class="text-lg font-semibold text-slate-100">Business Profile</h2>
+                <div class="border-2 border-dashed border-slate-700/70 rounded-xl p-5 flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-xl bg-slate-950/70 border border-slate-800 flex items-center justify-center text-slate-500"><i class="fa-solid fa-image text-xl"></i></div>
+                    <div><button type="button" class="px-4 py-2 rounded-lg border border-slate-700 text-slate-300 hover:border-slate-500 transition-colors">Upload</button><p class="text-xs text-slate-500 mt-2">PNG/JPG/WebP/SVG up to 5MB</p></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label class="block text-sm text-slate-300 mb-2">Full Name</label><input type="text" class="settings-input"></div>
+                    <div><label class="block text-sm text-slate-300 mb-2">Email</label><div class="flex gap-2"><input type="email" class="settings-input flex-1"><button type="button" class="px-4 rounded-lg border border-slate-700 text-slate-300">Change</button></div></div>
+                    <div><label class="block text-sm text-slate-300 mb-2">Entity Type</label><select class="settings-input"><option>Individual/Sole Trader</option><option>LLC</option><option>Corp</option></select></div>
+                    <div><label class="block text-sm text-slate-300 mb-2">Company Name (optional)</label><input type="text" class="settings-input"></div>
+                </div>
+                <div><label class="block text-sm text-slate-300 mb-2">Name shown to counterparties</label><select class="settings-input"><option>Company name</option><option>Personal name</option></select></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div><label class="block text-sm text-slate-300 mb-2">City</label><input type="text" placeholder="e.g. Lagos" class="settings-input"></div>
+                    <div><label class="block text-sm text-slate-300 mb-2">Country</label><select class="settings-input"><option>Nigeria</option><option>United States</option><option>United Kingdom</option><option>United Arab Emirates</option></select></div>
+                    <div><label class="block text-sm text-slate-300 mb-2">Phone (optional)</label><input type="tel" class="settings-input"></div>
+                    <div><label class="block text-sm text-slate-300 mb-2">Vendor Type</label><select class="settings-input"><option>Product</option><option>Service</option></select></div>
+                </div>
+                <button type="button" class="px-5 py-2.5 rounded-lg border border-slate-700 text-slate-300 hover:border-slate-500 transition-colors">💾 Save Profile</button>
+            </div>
+
+            <div class="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-6 space-y-4">
+                <div class="flex items-center gap-3"><h2 class="text-lg font-semibold text-slate-100">Website &amp; Social Media</h2><span class="text-xs font-semibold uppercase tracking-wider text-red-300 bg-red-500/10 border border-red-500/30 rounded-full px-3 py-1">Action Required</span></div>
+                <div><label class="block text-sm text-slate-300 mb-2">Website URL</label><input type="url" placeholder="https://yourstore.com" class="settings-input"></div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4"><div><label class="block text-sm text-slate-300 mb-2">Facebook page URL</label><input type="url" class="settings-input"></div><div><label class="block text-sm text-slate-300 mb-2">LinkedIn profile URL</label><input type="url" class="settings-input"></div><div><label class="block text-sm text-slate-300 mb-2">X (Twitter) profile URL</label><input type="url" class="settings-input"></div></div>
+                <button type="button" class="px-5 py-2.5 rounded-lg border border-slate-700 text-slate-300 hover:border-slate-500 transition-colors">💾 Save Web Presence</button>
+            </div>
+
+            <div class="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-6 space-y-5">
+                <h2 class="text-lg font-semibold text-slate-100">Verified License Boost <span class="text-slate-500">&amp;</span> Public Profile Details</h2>
+                <div class="bg-emerald-950/30 border border-emerald-800/40 rounded-xl p-4"><p class="font-semibold text-emerald-300">Boost conversion with a verified license</p><ul class="list-disc list-inside text-sm text-slate-400 mt-2 space-y-1"><li>Build buyer confidence at a glance.</li><li>Stand out in search and quote results.</li><li>Show verified business credentials on your public card.</li></ul></div>
+                <div class="flex items-center justify-between"><h3 class="text-sm font-semibold text-slate-200">Sectors Served</h3><button type="button" class="text-sm text-emerald-300 hover:text-emerald-200">+ Add Sector</button></div>
+                <div class="flex items-center justify-between"><h3 class="text-sm font-semibold text-slate-200">Licences &amp; Registrations</h3><button type="button" class="text-sm text-emerald-300 hover:text-emerald-200">+ Add Licence</button></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-sm text-slate-300 mb-2">Licence/Registration Number</label><input type="text" class="settings-input"></div><div><label class="block text-sm text-slate-300 mb-2">Issuing Authority</label><input type="text" class="settings-input"></div></div>
+                <label class="flex items-center gap-3 text-sm text-slate-300"><input type="checkbox" class="settings-toggle-checkbox h-4 w-4 accent-emerald-500"> <span>Show a 'Licensed' badge on my public card</span></label>
+                <button type="button" class="px-5 py-2.5 rounded-lg border border-slate-700 text-slate-300 hover:border-slate-500 transition-colors">💾 Save Public Details</button>
+            </div>
+
+            <div class="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-6 space-y-4">
+                <div class="flex items-center gap-3"><i class="fa-solid fa-coins text-amber-400"></i><h2 class="text-lg font-semibold text-slate-100">Settlement &amp; Payout</h2><span class="text-xs font-semibold text-amber-200 bg-amber-500/10 border border-amber-500/30 rounded-full px-3 py-1">STANDARD</span></div>
+                <h3 class="font-semibold text-slate-200">Released in USDC or USDT on Polygon</h3>
+                <div class="bg-slate-950/50 border border-slate-800/60 rounded-xl p-4 text-sm text-slate-400"><span class="font-semibold text-slate-200">What is deducted</span> - A 1.0% escrow service fee is taken from your amount at settlement...</div>
+                <button type="button" class="px-5 py-2.5 rounded-lg border border-slate-700 text-slate-300 hover:border-slate-500 transition-colors">Manage payout destination</button>
+            </div>
+
+            <div class="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-6 space-y-2">
+                <div class="flex items-center gap-3 mb-3"><i class="fa-solid fa-bell text-emerald-400"></i><h2 class="text-lg font-semibold text-slate-100">Notifications</h2></div>
+                <div class="grid grid-cols-[1fr_auto_auto] gap-x-6 text-xs uppercase tracking-wider text-slate-500 pb-2"><span></span><span>Email</span><span>In-App</span></div>
+                <div class="divide-y divide-slate-800/60">
+                    <div class="settings-notification-row"><span>New escrow created</span><input type="checkbox" class="settings-toggle-checkbox" checked><input type="checkbox" class="settings-toggle-checkbox" checked></div>
+                    <div class="settings-notification-row"><span>Buyer confirms delivery</span><input type="checkbox" class="settings-toggle-checkbox" checked><input type="checkbox" class="settings-toggle-checkbox" checked></div>
+                    <div class="settings-notification-row"><span>Funds released</span><input type="checkbox" class="settings-toggle-checkbox" checked><input type="checkbox" class="settings-toggle-checkbox" checked></div>
+                    <div class="settings-notification-row"><span>Dispute opened against you</span><input type="checkbox" class="settings-toggle-checkbox" checked><input type="checkbox" class="settings-toggle-checkbox" checked></div>
+                    <div class="settings-notification-row"><span>KYC status update</span><input type="checkbox" class="settings-toggle-checkbox"><input type="checkbox" class="settings-toggle-checkbox" checked></div>
+                    <div class="settings-notification-row"><span>Plan expiry reminder</span><input type="checkbox" class="settings-toggle-checkbox" checked><input type="checkbox" class="settings-toggle-checkbox"></div>
+                    <div class="settings-notification-row"><span>Order limit warning</span><input type="checkbox" class="settings-toggle-checkbox" checked><input type="checkbox" class="settings-toggle-checkbox" checked></div>
+                </div>
+            </div>
+
+            <div class="sticky bottom-0 bg-slate-950/95 border border-slate-800 rounded-2xl p-4 flex items-center justify-between gap-4 backdrop-blur-sm"><span class="text-sm text-slate-300">Save all changes on this page</span><button type="button" class="bg-emerald-600 hover:bg-emerald-500 text-slate-100 font-semibold px-5 py-2.5 rounded-lg transition-colors">💾 Save all changes</button></div>
+        </div>
+
+        </main>
     </div>
 
     <script src="js/vendor.js"></script>
