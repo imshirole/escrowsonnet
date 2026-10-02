@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/design-system.css">
     
     <script>
         tailwind.config = {
@@ -84,10 +85,10 @@
 
             <!-- Desktop Nav -->
             <nav class="hidden md:flex items-center space-x-8">
-                <a href="#" id="nav-home" class="text-gray-300 hover:text-white transition-colors duration-200 text-sm font-medium mx-3">Home</a>
-                <a href="#" id="nav-about" class="text-gray-300 hover:text-white transition-colors duration-200 text-sm font-medium mx-3">About Us</a>
-                <a href="#" id="nav-collateral" class="text-gray-300 hover:text-white transition-colors duration-200 text-sm font-medium mx-3">Collateral</a>
-                <a href="#" id="nav-industries" class="text-gray-300 hover:text-white transition-colors duration-200 text-sm font-medium mx-3">Industries</a>
+                <a href="#" id="nav-home" class="text-gray-300 hover:text-white transition-colors duration-200 text-sm font-medium mx-3">Product</a>
+                <a href="#" id="nav-about" class="text-gray-300 hover:text-white transition-colors duration-200 text-sm font-medium mx-3">Solutions</a>
+                <a href="#" id="nav-collateral" class="text-gray-300 hover:text-white transition-colors duration-200 text-sm font-medium mx-3">How it works</a>
+                <a href="#" id="nav-industries" class="text-gray-300 hover:text-white transition-colors duration-200 text-sm font-medium mx-3">Resources</a>
                 <a href="#" id="nav-pricing" class="text-gray-300 hover:text-white transition-colors duration-200 text-sm font-medium mx-3">Pricing</a>
                 <a href="#" id="nav-contact" class="text-gray-300 hover:text-white transition-colors duration-200 text-sm font-medium mx-3">Contact Us</a>
             </nav>
@@ -98,7 +99,7 @@
                     Login
                 </button>
                 <button id="nav-start-escrow" class="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-500 text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-brand-500/20 transition-all duration-300 transform hover:-translate-y-0.5">
-                    Start Escrow Free
+                    Start an Escrow
                 </button>
             </div>
 
@@ -148,38 +149,38 @@
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                     </span>
-                    <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider font-mono">Managed Escrow Transactions</span>
+                    <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider font-mono">Escrow infrastructure for global commerce</span>
                 </div>
 
                 <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight leading-tight">
-                    The Escrow OS for <br>
-                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-brand-500 via-blue-400 to-emerald-400">Global Trade</span>
+                    Secure trade.<br>
+                    <span>Without the uncertainty.</span>
                 </h1>
 
                 <p class="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                    Create clear cross-border escrow transactions with buyer-facing payment links, separately tracked invoice and collateral amounts, and delivery terms.
+                    Create structured escrow transactions with protected payments, dual collateral, and clear milestones.
                 </p>
 
-                <!-- Value propositions tags -->
+                <!-- Trust markers -->
                 <div class="flex flex-wrap justify-center lg:justify-start gap-4 text-xs font-mono text-gray-300">
                     <span class="flex items-center bg-brand-surface/40 border border-brand-border/60 rounded-lg px-3 py-2">
-                        <i class="fa-solid fa-link text-brand-500 mr-2"></i> Shareable Payment Links
+                        <i class="fa-solid fa-link text-brand-500 mr-2"></i> Structured payments
                     </span>
                     <span class="flex items-center bg-brand-surface/40 border border-brand-border/60 rounded-lg px-3 py-2">
-                        <i class="fa-solid fa-file-shield text-emerald-400 mr-2"></i> Document-Gated Milestones
+                        <i class="fa-solid fa-file-shield text-emerald-400 mr-2"></i> Dual collateral
                     </span>
                     <span class="flex items-center bg-brand-surface/40 border border-brand-border/60 rounded-lg px-3 py-2">
-                        <i class="fa-solid fa-coins text-brand-500 mr-2"></i> Multi-Currency Settlement
+                        <i class="fa-solid fa-route text-brand-500 mr-2"></i> Global trade
                     </span>
                 </div>
 
                 <!-- CTA buttons -->
                 <div class="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
                     <button data-open-modal="create-modal" class="bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-500 text-white font-bold px-8 py-4 rounded-xl shadow-xl shadow-brand-500/20 transition-all duration-300 transform hover:-translate-y-0.5">
-                        Start Escrow Free
+                        Start an Escrow
                     </button>
                     <a href="#how-it-works" class="inline-flex items-center justify-center border border-brand-border hover:bg-brand-surface text-gray-300 hover:text-white font-bold px-8 py-4 rounded-xl transition-all duration-300">
-                        See How It Works <i class="fa-solid fa-arrow-right ml-2 text-sm"></i>
+                        See how it works <i class="fa-solid fa-arrow-right ml-2 text-sm"></i>
                     </a>
                 </div>
             </div>
@@ -275,20 +276,20 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-                <p class="text-4xl md:text-5xl font-black text-white">$18T+</p>
-                <p class="text-xs md:text-sm font-mono text-gray-500 uppercase tracking-widest mt-2">Annual Trade Vol.</p>
+                <p class="text-sm font-bold text-white">DUAL COLLATERAL</p>
+                <p class="text-xs md:text-sm font-mono text-gray-500 uppercase tracking-widest mt-2">Both parties committed</p>
             </div>
             <div>
-                <p class="text-4xl md:text-5xl font-black text-brand-500">40%</p>
-                <p class="text-xs md:text-sm font-mono text-gray-500 uppercase tracking-widest mt-2">SMEs Denied Finance</p>
+                <p class="text-sm font-bold text-brand-500">STRUCTURED PAYMENTS</p>
+                <p class="text-xs md:text-sm font-mono text-gray-500 uppercase tracking-widest mt-2">Clear funding conditions</p>
             </div>
             <div>
-                <p class="text-4xl md:text-5xl font-black text-red-500">$1.7T</p>
-                <p class="text-xs md:text-sm font-mono text-gray-500 uppercase tracking-widest mt-2">Trade Finance Gap</p>
+                <p class="text-sm font-bold text-white">GLOBAL TRADE</p>
+                <p class="text-xs md:text-sm font-mono text-gray-500 uppercase tracking-widest mt-2">Terms that travel</p>
             </div>
             <div>
-                <p class="text-4xl md:text-5xl font-black text-emerald-400">30%</p>
-                <p class="text-xs md:text-sm font-mono text-gray-500 uppercase tracking-widest mt-2">Collateral Per Party</p>
+                <p class="text-sm font-bold text-emerald-400">MILESTONE RELEASES</p>
+                <p class="text-xs md:text-sm font-mono text-gray-500 uppercase tracking-widest mt-2">Delivery-led progress</p>
             </div>
         </div>
     </div>
@@ -1705,5 +1706,6 @@
 <!-- CORE PORTAL JAVASCRIPT LOGIC -->
 <script src="js/transactions.js"></script>
 <script src="js/app.js"></script>
+<script src="js/ui-motion.js"></script>
 </body>
 </html>

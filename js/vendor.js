@@ -1102,23 +1102,23 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     transactions.forEach(function (transaction) {
       var card = document.createElement('article');
-      card.className = 'space-y-3 rounded-xl border border-slate-800/70 bg-slate-950/40 p-4';
+      card.className = 'es-transaction-card space-y-3 rounded-xl border border-slate-800/70 bg-slate-950/40 p-4';
       var heading = document.createElement('div');
       heading.className = 'flex flex-wrap items-center justify-between gap-3';
       heading.appendChild(makeTextElement('h3', 'font-mono text-sm font-bold text-white', transaction.escrowId));
-      heading.appendChild(makeTextElement('span', 'rounded-md border border-emerald-500/30 px-2.5 py-1 text-xs font-semibold text-emerald-200', transaction.status));
+      heading.appendChild(makeTextElement('span', 'es-transaction-status rounded-md border border-emerald-500/30 px-2.5 py-1 text-xs font-semibold text-emerald-200', transaction.status.replaceAll('_', ' ')));
       card.appendChild(heading);
       card.appendChild(makeTextElement('p', 'text-sm text-slate-300', transaction.buyer.name + ' · ' + transaction.buyer.contact));
       card.appendChild(makeTextElement('p', 'text-sm text-slate-300', 'Invoice ' + formatTransactionMoney(transaction.invoiceAmount, transaction.currency) + ' · Buyer collateral ' + formatTransactionMoney(transaction.buyerCollateral, transaction.currency) + ' · Buyer total due ' + formatTransactionMoney(transaction.totalRequiredFromBuyer, transaction.currency) + ' · Seller collateral ' + formatTransactionMoney(transaction.sellerCollateral, transaction.currency)));
       card.appendChild(makeTextElement('p', 'text-xs text-amber-200', 'Payment status: ' + transaction.paymentStatus + ' · MOCK only'));
       var linkRow = document.createElement('div');
-      linkRow.className = 'flex flex-wrap items-center gap-3';
+      linkRow.className = 'es-payment-link-row flex flex-wrap items-center gap-3';
       var openLink = document.createElement('a');
       openLink.href = transaction.paymentLink || '#';
       openLink.target = '_blank';
       openLink.rel = 'noreferrer';
       openLink.className = 'break-all text-sm text-emerald-300 underline';
-      openLink.textContent = transaction.paymentLink || 'Seller collateral required before buyer link is shown';
+      openLink.textContent = transaction.paymentLink || 'Payment link locked — seller collateral required';
       openLink.classList.toggle('pointer-events-none', !transaction.paymentLink);
       linkRow.appendChild(openLink);
       if (transaction.paymentLink) {
