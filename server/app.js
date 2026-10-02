@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("node:path");
 const { createHash, randomBytes } = require("node:crypto");
+const QRCode = require("qrcode");
 const { MockPaymentProvider } = require("./payment-provider");
 const { openDatabase } = require("./db");
 const { TransactionError, TransactionService } = require("./transaction-service");
@@ -75,6 +76,22 @@ function createApp(options = {}) {
   app.get("/api/vendor/session", requireVendor, (req, res) => {
     res.status(200).type("application/json").json({ ok: true, vendorId: req.vendorId });
   });
+  app.post("/api/demo-qr", requireVendor, async (req, res, next) => {
+    const demoUri = typeof req.body?.demoUri === "string" ? req.body.demoUri : "";
+    if (!demoUri.startsWith("escrowsonet-demo://deposit/")) {
+      return res.status(400).type("application/json").json({ ok: false, error: "Only demo QR payloads are supported." });
+    }
+    try {
+      const qrDataUrl = await QRCode.toDataURL(demoUri, {
+        width: 180,
+        margin: 1,
+        color: { dark: "#0f172a", light: "#ffffff" }
+      });
+      res.status(200).type("application/json").json({ ok: true, qrDataUrl });
+    } catch (error) {
+      next(error);
+    }
+  });
   app.post("/api/transactions", requireVendor, (req, res, next) => {
     try {
       const transaction = service.createTransaction(req.vendorId, req.body || {});
@@ -88,7 +105,7 @@ function createApp(options = {}) {
   });
   app.post("/api/transactions/:escrowId/deposit-collateral", requireVendor, (req, res, next) => {
     try {
-      const transaction = service.depositSellerCollateral(req.vendorId, req.params.escrowId);
+      const transaction = service.depositSellerCollateral(req.vendorId, req.params.escrowId, req.body || {});
       res.status(200).type("application/json").json({ ok: true, transaction, paymentLink: transaction.paymentLink });
     } catch (error) {
       next(error);
@@ -161,10 +178,15 @@ function createApp(options = {}) {
     }
   });
 
-  app.get("/pay/:token", (req, res) => {
+  app.get("/pay/:token", (req, res, next) => {
     if (!/^ESC-\d{4}-[A-F0-9]{32}$/.test(req.params.token)) return res.sendStatus(404);
-    res.set("Cache-Control", "no-store");
-    res.sendFile(path.resolve(process.cwd(), "pay.html"));
+    try {
+      service.getByPaymentLink(req.params.token);
+      res.set("Cache-Control", "no-store");
+      res.sendFile(path.resolve(process.cwd(), "pay.html"));
+    } catch (error) {
+      next(error);
+    }
   });
   app.use((req, res, next) => {
     if (/^\/(node_modules|contracts|server|data)(\/|$)/.test(req.path)) return res.sendStatus(404);

@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function render(data) {
     transaction = data;
-    const sellerReady = data.sellerCollateralStatus === 'RECEIVED' || ['SELLER_FUNDED', 'BUYER_PAYMENT_PENDING', 'BUYER_FUNDED', 'ACTIVE', 'DELIVERED', 'DISPUTED', 'COMPLETED'].includes(data.status);
+    const sellerReady = ['SECURED', 'RECEIVED'].includes(data.sellerCollateralStatus) || ['SELLER_FUNDED', 'BUYER_PAYMENT_PENDING', 'BUYER_FUNDED', 'ACTIVE', 'DELIVERED', 'DISPUTED', 'COMPLETED'].includes(data.status);
     if (!sellerReady) {
       loading.classList.add('hidden');
       errorPanel.classList.remove('hidden');
@@ -52,6 +52,9 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('payment-escrow-status').textContent = data.status.replaceAll('_', ' ');
     document.getElementById('payment-vendor').textContent = data.vendor.name;
     document.getElementById('payment-status').textContent = data.paymentStatus + (data.paymentMode ? ' · ' + data.paymentMode : '');
+    if (['SECURED', 'RECEIVED'].includes(data.sellerCollateralStatus) || data.status === 'SELLER_FUNDED') {
+      document.getElementById('payment-status').textContent = 'AWAITING BUYER PAYMENT';
+    }
     document.getElementById('payment-invoice').textContent = formatMoney(data.invoiceAmount, data.currency);
     document.getElementById('payment-buyer-collateral').textContent = formatMoney(data.buyerCollateral, data.currency);
     document.getElementById('payment-seller-collateral').textContent = formatMoney(data.sellerCollateral, data.currency);

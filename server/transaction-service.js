@@ -2,6 +2,19 @@ const { createHash, randomBytes } = require("node:crypto");
 
 const COLLATERAL_BPS = 3000;
 const ALLOWED_CURRENCIES = new Set(["USD", "EUR", "GBP", "CAD", "AUD"]);
+const DEMO_ASSET_NETWORKS = {
+  USDT: new Set(["TRC20", "ERC20", "Polygon"]),
+  USDC: new Set(["ERC20", "Polygon"]),
+  BTC: new Set(["Bitcoin"]),
+  BCH: new Set(["Bitcoin Cash"]),
+  TRX: new Set(["Tron"]),
+  DASH: new Set(["Dash"]),
+  MATIC: new Set(["Polygon"]),
+  DAI: new Set(["ERC20"]),
+  SHIB: new Set(["ERC20"]),
+  XRP: new Set(["Ripple"]),
+  TON: new Set(["The Open Network"])
+};
 const TERMINAL_STATES = new Set(["COMPLETED", "CANCELLED", "EXPIRED"]);
 const ALLOWED_TRANSITIONS = {
   CREATED: new Set(["SELLER_COLLATERAL_PENDING", "CANCELLED", "EXPIRED"]),
@@ -71,6 +84,7 @@ function rowToTransaction(row, { includeVendorDetails = true, includePaymentLink
   const invoiceAmount = formatMinorUnits(row.invoice_amount_minor);
   const buyerCollateral = formatMinorUnits(row.buyer_collateral_minor);
   const sellerCollateral = formatMinorUnits(row.seller_collateral_minor);
+  const sellerCollateralStatus = row.seller_collateral_status || "PENDING";
   const transaction = {
     escrowId: row.escrow_id,
     ...(includeVendorDetails ? {
@@ -84,7 +98,16 @@ function rowToTransaction(row, { includeVendorDetails = true, includePaymentLink
     currency: row.currency,
     buyerCollateral,
     sellerCollateral,
-    sellerCollateralStatus: row.seller_collateral_status || "PENDING",
+    sellerCollateralStatus,
+    sellerCollateralAmount: Number(row.seller_collateral_minor),
+    sellerCollateralPercentage: 30,
+    selectedAsset: row.selected_asset || null,
+    selectedNetwork: row.selected_network || null,
+    demoAddress: row.demo_address || null,
+    demoQrData: row.demo_qr_data || null,
+    mockPaymentStatus: row.mock_payment_status || null,
+    mockPaymentReference: row.mock_payment_reference || null,
+    sellerCollateralPaidAt: row.seller_collateral_paid_at || null,
     totalRequiredFromBuyer: formatMinorUnits(BigInt(row.invoice_amount_minor) + BigInt(row.buyer_collateral_minor)),
     description: row.description,
     deliveryTerms: row.delivery_terms,
@@ -99,7 +122,7 @@ function rowToTransaction(row, { includeVendorDetails = true, includePaymentLink
     expiresAt: row.expires_at
   };
   if (includePaymentLink) {
-    transaction.paymentLink = row.seller_collateral_status === "RECEIVED" ? `/pay/${row.escrow_id}` : null;
+    transaction.paymentLink = sellerCollateralStatus === "SECURED" ? `/pay/${row.escrow_id}` : null;
   }
   return transaction;
 }
@@ -157,12 +180,12 @@ class TransactionService {
             buyer_name, buyer_contact, invoice_amount_minor, currency, buyer_collateral_minor,
             seller_collateral_minor, seller_collateral_status, description, delivery_terms, expected_delivery_date,
             status, payment_status, created_at, updated_at, expires_at
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'CREATED', 'PENDING', ?, ?, ?)`)
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'SELLER_COLLATERAL_PENDING', 'PENDING', ?, ?, ?)`)
             .run(escrowId, hashToken(escrowId), vendorId, vendorName,
               buyerName, buyerContact, invoiceAmountMinor, currency, buyerCollateralMinor,
               sellerCollateralMinor, "PENDING", description, deliveryTerms, input.expectedDeliveryDate,
               createdAt, createdAt, expiresAt);
-          this.#recordEvent(escrowId, "TRANSACTION_CREATED", null, "CREATED", "PENDING", { collateralBps: COLLATERAL_BPS });
+          this.#recordEvent(escrowId, "TRANSACTION_CREATED", null, "SELLER_COLLATERAL_PENDING", "PENDING", { collateralBps: COLLATERAL_BPS });
         });
         inserted = true;
       } catch (error) {
@@ -173,7 +196,6 @@ class TransactionService {
 
     const row = this.db.prepare("SELECT * FROM transactions WHERE escrow_id = ?").get(escrowId);
     const transaction = rowToTransaction(row, { includePaymentLink: true });
-    transaction.status = transaction.status || "SELLER_COLLATERAL_PENDING";
     transaction.paymentLink = null;
     if (this.appOrigin && transaction.paymentLink) transaction.paymentLink = `${this.appOrigin}${transaction.paymentLink}`;
     return transaction;
@@ -192,8 +214,8 @@ class TransactionService {
 
   getByPaymentLink(token) {
     const row = this.#getRowByToken(token);
-    if (row.seller_collateral_status !== "RECEIVED") {
-      throw new TransactionError("Payment unavailable. The seller has not yet secured their required collateral. Please wait until the seller completes the security deposit.", 403);
+    if (row.seller_collateral_status !== "SECURED") {
+      throw new TransactionError("Seller collateral has not been secured yet.", 409);
     }
     this.#expireIfNeeded(row);
     return this.#publicTransaction(token);
@@ -201,8 +223,8 @@ class TransactionService {
 
   async proceedToPayment(token) {
     let row = this.#getRowByToken(token);
-    if (row.seller_collateral_status !== "RECEIVED") {
-      throw new TransactionError("Payment unavailable. The seller has not yet secured their required collateral.", 403);
+    if (row.seller_collateral_status !== "SECURED") {
+      throw new TransactionError("Seller collateral has not been secured yet.", 409);
     }
     row = this.#expireIfNeeded(row);
     if (row.status === "BUYER_PAYMENT_PENDING" && row.payment_provider_id) {
@@ -232,8 +254,8 @@ class TransactionService {
 
   async confirmMockPayment(token) {
     let row = this.#getRowByToken(token);
-    if (row.seller_collateral_status !== "RECEIVED") {
-      throw new TransactionError("Payment unavailable. The seller has not yet secured their required collateral.", 403);
+    if (row.seller_collateral_status !== "SECURED") {
+      throw new TransactionError("Seller collateral has not been secured yet.", 409);
     }
     row = this.#expireIfNeeded(row);
     if (row.payment_provider_status === "MOCK_CONFIRMED" && ["BUYER_FUNDED", "ACTIVE"].includes(row.status)) {
@@ -287,8 +309,8 @@ class TransactionService {
 
   async updateBuyerStatus(token, status, reason = "") {
     let row = this.#getRowByToken(token);
-    if (row.seller_collateral_status !== "RECEIVED") {
-      throw new TransactionError("Payment unavailable. The seller has not yet secured their required collateral. Please wait until the seller completes the security deposit.", 403);
+    if (row.seller_collateral_status !== "SECURED") {
+      throw new TransactionError("Seller collateral has not been secured yet.", 409);
     }
     row = this.#expireIfNeeded(row);
     if (!new Set(["DISPUTED", "COMPLETED"]).has(status)) {
@@ -301,20 +323,30 @@ class TransactionService {
     return this.#transition(row, status, `BUYER_${status}`, { actor: "BUYER_LINK", reason: reason.trim().slice(0, 500) });
   }
 
-  depositSellerCollateral(vendorId, escrowId) {
+  depositSellerCollateral(vendorId, escrowId, details = {}) {
     const row = this.#getVendorRow(vendorId, escrowId);
     if (row.status !== "CREATED" && row.status !== "SELLER_COLLATERAL_PENDING") {
       throw new TransactionError("Seller collateral can only be deposited before buyer payment is enabled", 409);
     }
-    if (row.seller_collateral_status === "RECEIVED") {
+    if (row.seller_collateral_status === "SECURED") {
       return rowToTransaction(this.db.prepare("SELECT * FROM transactions WHERE escrow_id = ?").get(escrowId), { includePaymentLink: true });
     }
+
+    const selectedAsset = cleanString(String(details.selectedAsset || "USDT"), "Selected asset", 32).toUpperCase();
+    const selectedNetwork = cleanString(String(details.selectedNetwork || "TRC20"), "Selected network", 32);
+    if (!DEMO_ASSET_NETWORKS[selectedAsset] || !DEMO_ASSET_NETWORKS[selectedAsset].has(selectedNetwork)) {
+      throw new TransactionError("Unsupported demo asset/network combination.", 400);
+    }
+    const demoAmount = formatMinorUnits(row.seller_collateral_minor);
+    const demoAddress = String(details.demoAddress || `DEMO-${escrowId.replace(/[^A-Z0-9]/gi, "").slice(0, 18)}-${selectedAsset}-${selectedNetwork}`.toUpperCase()).slice(0, 160);
+    const demoQrData = String(details.demoQrData || `escrowsonet-demo://deposit/${escrowId}?asset=${selectedAsset}&network=${selectedNetwork}&amount=${demoAmount}&currency=${row.currency}`);
+    const mockPaymentReference = String(details.mockPaymentReference || `DEMO-TX-${randomBytes(4).toString("hex").toUpperCase()}`);
     const updatedAt = new Date().toISOString();
     withDatabaseTransaction(this.db, () => {
-      const changed = this.db.prepare(`UPDATE transactions SET seller_collateral_status = 'RECEIVED', status = 'SELLER_FUNDED', updated_at = ? WHERE escrow_id = ? AND status IN ('CREATED', 'SELLER_COLLATERAL_PENDING')`)
-        .run(updatedAt, escrowId);
+      const changed = this.db.prepare(`UPDATE transactions SET seller_collateral_status = 'SECURED', selected_asset = ?, selected_network = ?, demo_address = ?, demo_qr_data = ?, mock_payment_status = 'CONFIRMED', mock_payment_reference = ?, seller_collateral_paid_at = ?, status = 'SELLER_FUNDED', updated_at = ? WHERE escrow_id = ? AND status IN ('CREATED', 'SELLER_COLLATERAL_PENDING')`)
+        .run(selectedAsset, selectedNetwork, demoAddress, demoQrData, mockPaymentReference, updatedAt, updatedAt, escrowId);
       if (!changed.changes) throw new TransactionError("Seller collateral status changed; reload and retry", 409);
-      this.#recordEvent(escrowId, "SELLER_COLLATERAL_RECEIVED", row.status, "SELLER_FUNDED", "PENDING", { mode: "MOCK", amount: formatMinorUnits(row.seller_collateral_minor), currency: row.currency });
+      this.#recordEvent(escrowId, "SELLER_COLLATERAL_SECURED", row.status, "SELLER_FUNDED", "CONFIRMED", { mode: "MOCK", asset: selectedAsset, network: selectedNetwork, amount: demoAmount, paymentReference: mockPaymentReference, demoAddress, demoQrData });
     });
     return rowToTransaction(this.db.prepare("SELECT * FROM transactions WHERE escrow_id = ?").get(escrowId), { includePaymentLink: true });
   }

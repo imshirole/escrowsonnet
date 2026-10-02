@@ -57,23 +57,45 @@ test("seller collateral must be funded before a buyer payment link becomes visib
   assert.equal(created.invoiceAmount, "10000.00");
   assert.equal(created.buyerCollateral, "3000.00");
   assert.equal(created.sellerCollateral, "3000.00");
-  assert.equal(created.status, "CREATED");
+  assert.equal(created.status, "SELLER_COLLATERAL_PENDING");
   assert.equal(created.paymentStatus, "PENDING");
+  assert.equal(created.sellerCollateralStatus, "PENDING");
   assert.equal(created.paymentLink, null);
+  assert.equal(createdPayload.paymentLink, null);
 
   const blockedBeforeDeposit = await request(`/api/payment-links/${created.escrowId}`);
-  assert.equal(blockedBeforeDeposit.status, 403);
+  assert.equal(blockedBeforeDeposit.status, 409);
+  assert.deepEqual(await blockedBeforeDeposit.json(), { ok: false, error: "Seller collateral has not been secured yet." });
+  const blockedBuyerPage = await request(`/pay/${created.escrowId}`);
+  assert.equal(blockedBuyerPage.status, 409);
+  assert.deepEqual(await blockedBuyerPage.json(), { ok: false, error: "Seller collateral has not been secured yet." });
+
+  const invalidNetwork = await request(`/api/transactions/${created.escrowId}/deposit-collateral`, {
+    method: "POST",
+    headers: { Cookie: vendorCookie, "Content-Type": "application/json" },
+    body: JSON.stringify({ selectedAsset: "USDT", selectedNetwork: "BEP-20" })
+  });
+  assert.equal(invalidNetwork.status, 400);
 
   const depositResponse = await request(`/api/transactions/${created.escrowId}/deposit-collateral`, {
     method: "POST",
-    headers: { Cookie: vendorCookie }
+    headers: { Cookie: vendorCookie, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      selectedAsset: "USDT",
+      selectedNetwork: "TRC20",
+      demoAddress: "DEMO-USDT-TRC20-FAKE",
+      demoQrData: "escrowsonet-demo://deposit/fake",
+      mockPaymentReference: "DEMO-TX-12345678"
+    })
   });
   assert.equal(depositResponse.status, 200);
   const depositPayload = await depositResponse.json();
   assert.equal(depositPayload.ok, true);
   assert.equal(depositPayload.transaction.status, "SELLER_FUNDED");
-  assert.equal(depositPayload.transaction.sellerCollateralStatus, "RECEIVED");
+  assert.equal(depositPayload.transaction.sellerCollateralStatus, "SECURED");
   assert.equal(depositPayload.transaction.paymentLink, `/pay/${created.escrowId}`);
+  assert.equal(depositPayload.paymentLink, `/pay/${created.escrowId}`);
+  assert.equal((await request(`/pay/${created.escrowId}`)).status, 200);
 
   const token = created.escrowId;
   const buyerResponse = await request(`/api/payment-links/${token}`);
@@ -122,6 +144,25 @@ test("seller collateral must be funded before a buyer payment link becomes visib
     body: JSON.stringify({ vendorName: "Test", buyerName: "Test", buyerContact: "bad", invoiceAmount: "100.001" })
   });
   assert.equal(invalidResponse.status, 400);
+});
+
+test("demo QR generation only accepts fake demo URIs", async () => {
+  const vendorCookie = await createVendorSession();
+  const validResponse = await request("/api/demo-qr", {
+    method: "POST",
+    headers: { Cookie: vendorCookie, "Content-Type": "application/json" },
+    body: JSON.stringify({ demoUri: "escrowsonet-demo://deposit/ESC-DEMO?asset=USDT&network=TRC20" })
+  });
+  assert.equal(validResponse.status, 200);
+  assert.match((await validResponse.json()).qrDataUrl, /^data:image\/png;base64,/);
+
+  const realWalletResponse = await request("/api/demo-qr", {
+    method: "POST",
+    headers: { Cookie: vendorCookie, "Content-Type": "application/json" },
+    body: JSON.stringify({ demoUri: "bitcoin:bc1real-looking-address" })
+  });
+  assert.equal(realWalletResponse.status, 400);
+  assert.equal((await realWalletResponse.json()).error, "Only demo QR payloads are supported.");
 });
 
 test("invalid or sequential database IDs are not accepted as public payment links", async () => {

@@ -428,6 +428,187 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
+  var supportedSellerCollateralAssets = [
+    { asset: 'USDT', label: 'USDT', networks: ['TRC20'] },
+    { asset: 'USDT', label: 'USDT', networks: ['ERC20'] },
+    { asset: 'USDT', label: 'USDT', networks: ['Polygon'] },
+    { asset: 'USDC', label: 'USDC', networks: ['ERC20'] },
+    { asset: 'USDC', label: 'USDC', networks: ['Polygon'] },
+    { asset: 'BTC', label: 'Bitcoin (BTC)', networks: ['Bitcoin'] },
+    { asset: 'BCH', label: 'Bitcoin Cash (BCH)', networks: ['Bitcoin Cash'] },
+    { asset: 'TRX', label: 'Tron (TRX)', networks: ['Tron'] },
+    { asset: 'DASH', label: 'Dash (DASH)', networks: ['Dash'] },
+    { asset: 'MATIC', label: 'Polygon (MATIC)', networks: ['Polygon'] },
+    { asset: 'DAI', label: 'Dai (DAI)', networks: ['ERC20'] },
+    { asset: 'SHIB', label: 'Shiba Inu (SHIB)', networks: ['ERC20'] },
+    { asset: 'XRP', label: 'Ripple (XRP)', networks: ['Ripple'] },
+    { asset: 'TON', label: 'The Open Network (TON)', networks: ['The Open Network'] }
+  ];
+
+  function formatDemoNumericAmount(amount) {
+    var value = Number(amount || 0);
+    return new Intl.NumberFormat(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
+  }
+
+  function buildDemoAddress(escrowId, asset, network) {
+    var rawSeed = (escrowId + asset + network).replace(/[^A-Z0-9]/gi, '').toUpperCase();
+    var suffix = rawSeed.slice(0, 24) || 'DEMO';
+    return 'DEMO-' + asset + '-' + network.replace(/[^A-Z0-9]/gi, '').toUpperCase().slice(0, 10) + '-' + suffix;
+  }
+
+  function buildDemoQrData(escrowId, asset, network, amount) {
+    return 'escrowsonet-demo://deposit/' + encodeURIComponent(escrowId) + '?asset=' + encodeURIComponent(asset) + '&network=' + encodeURIComponent(network) + '&amount=' + encodeURIComponent(String(amount)) + '&currency=USD';
+  }
+
+  function ensureSellerCollateralModal() {
+    var modal = document.getElementById('seller-collateral-modal');
+    if (modal) return modal;
+    modal = document.createElement('div');
+    modal.id = 'seller-collateral-modal';
+    modal.className = 'fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/75 p-4 backdrop-blur-sm';
+    modal.innerHTML = '<div class="w-full max-w-2xl rounded-2xl border border-slate-800 bg-slate-950 p-4 shadow-2xl shadow-emerald-950/20 sm:p-6"><div class="mb-5 flex items-center justify-between gap-3"><div><p class="text-xs uppercase tracking-[0.25em] text-emerald-300">Seller security deposit</p><h3 class="mt-2 text-xl font-bold text-white">Secure 30% collateral</h3></div><button type="button" data-close-seller-modal="true" class="rounded-full border border-slate-700 px-3 py-1.5 text-sm text-slate-300 hover:border-emerald-400 hover:text-emerald-200">Close</button></div><div id="seller-collateral-step"></div></div>';
+    modal.firstElementChild.style.maxHeight = 'calc(100vh - 2rem)';
+    modal.firstElementChild.style.overflowY = 'auto';
+    document.body.appendChild(modal);
+    modal.addEventListener('click', function (event) {
+      if (event.target === modal || event.target.getAttribute('data-close-seller-modal') === 'true') {
+        modal.classList.add('hidden');
+      }
+    });
+    return modal;
+  }
+
+  function renderSellerCollateralStep(escrowId, transaction) {
+    var modal = ensureSellerCollateralModal();
+    var step = document.getElementById('seller-collateral-step');
+    if (!step) return;
+    var collateralAmount = Number(transaction.sellerCollateral || 0);
+    var amountText = formatDemoNumericAmount(collateralAmount);
+    var selectedAsset = transaction.selectedAsset || 'USDT';
+    var selectedNetwork = transaction.selectedNetwork || 'TRC20';
+    var hasGateway = transaction.sellerCollateralStatus === 'SECURED';
+    if (hasGateway) {
+      step.innerHTML = '<div class="space-y-4"><div class="rounded-xl border border-emerald-500/30 bg-emerald-950/20 p-4"><p class="text-xs uppercase tracking-[0.22em] text-emerald-300">Seller collateral secured</p><h4 class="mt-2 text-2xl font-bold text-white">$' + amountText + ' USD</h4><p class="mt-2 text-sm text-slate-300">The seller has secured the required 30% security deposit for this transaction.</p></div><div class="rounded-xl border border-slate-800 bg-slate-900/40 p-4"><p class="text-sm text-slate-300">Buyer payment link: ready to share</p></div></div>';
+      return;
+    }
+
+    step.innerHTML = '<div class="space-y-5"><div class="rounded-xl border border-amber-500/30 bg-amber-950/20 p-4"><p class="text-xs uppercase tracking-[0.22em] text-amber-200">ESCROW CREATED</p><h4 class="mt-2 text-2xl font-bold text-white">Seller security deposit required</h4><p class="mt-2 text-3xl font-black text-emerald-300">$' + amountText + ' USD</p><p class="mt-2 text-sm text-slate-300">Secure your 30% collateral before inviting the buyer.</p></div><div class="space-y-3"><p class="text-sm font-semibold text-slate-200">Select asset</p><div class="grid gap-3 sm:grid-cols-2">' + supportedSellerCollateralAssets.map(function (entry) {
+      return '<button type="button" data-seller-asset="' + entry.asset + '" class="seller-collateral-asset rounded-xl border border-slate-700 bg-slate-900/40 px-3 py-3 text-left text-sm text-slate-200 hover:border-emerald-400 hover:text-emerald-100 ' + (selectedAsset === entry.asset ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-200' : '') + '"><div class="flex items-center justify-between"><span class="font-semibold">' + entry.asset + '</span><span class="text-xs text-slate-400">' + entry.networks.join(' · ') + '</span></div></button>';
+    }).join('') + '</div></div><div class="rounded-xl border border-slate-800 bg-slate-900/40 p-4"><p class="text-sm font-semibold text-slate-200">Demo payment detail</p><p class="mt-2 text-sm text-slate-300">Amount to deposit: <span class="font-semibold text-white">' + amountText + ' ' + selectedAsset + '</span> <span class="text-amber-200">DEMO AMOUNT</span></p><p class="mt-2 text-sm text-slate-300">Network: <span class="font-semibold text-white">' + selectedNetwork + '</span></p><button type="button" id="seller-collateral-confirm-btn" class="mt-4 w-full rounded-lg bg-emerald-600 px-4 py-3 font-bold text-white hover:bg-emerald-500">Deposit Seller Collateral</button></div></div>';
+    var assetButtons = step.querySelectorAll('[data-seller-asset]');
+    assetButtons.forEach(function (button, index) {
+      var entry = supportedSellerCollateralAssets[index];
+      var selected = selectedAsset === entry.asset && selectedNetwork === entry.networks[0];
+      var label = button.querySelector('.font-semibold');
+      if (label) label.textContent = entry.label;
+      if (!selected) button.classList.remove('border-emerald-500/40', 'bg-emerald-500/10', 'text-emerald-200');
+      button.addEventListener('click', function () {
+        selectedAsset = entry.asset;
+        selectedNetwork = entry.networks[0];
+        renderSellerCollateralStep(escrowId, { sellerCollateral: collateralAmount, sellerCollateralStatus: 'PENDING', selectedAsset: selectedAsset, selectedNetwork: selectedNetwork });
+        document.getElementById('seller-collateral-confirm-btn').click();
+      });
+    });
+    var confirmButton = document.getElementById('seller-collateral-confirm-btn');
+    if (confirmButton) {
+      confirmButton.hidden = true;
+      confirmButton.addEventListener('click', function () {
+        var amount = Number(transaction.sellerCollateral || collateralAmount);
+        var demoAddress = buildDemoAddress(escrowId, selectedAsset, selectedNetwork);
+        var qrData = buildDemoQrData(escrowId, selectedAsset, selectedNetwork, amount);
+        var reviewHtml = '<div class="space-y-5"><div class="rounded-xl border border-amber-500/30 bg-amber-950/20 p-4"><p class="text-xs uppercase tracking-[0.22em] text-amber-200">DEMO PAYMENT — NO REAL FUNDS</p><h4 class="mt-2 text-2xl font-bold text-white">Deposit $' + amountText + ' via ' + selectedAsset + ' (' + selectedNetwork + ')</h4><p class="mt-2 text-sm text-slate-300">Amount to deposit: <span class="font-semibold text-white">' + amountText + ' ' + selectedAsset + '</span> <span class="text-amber-200">DEMO AMOUNT</span></p></div><div class="rounded-xl border border-slate-800 bg-slate-900/40 p-4 space-y-4"><div class="flex items-center justify-between gap-3"><p class="text-sm font-semibold text-slate-200">Demo address</p><button type="button" data-copy-demo-address="true" class="rounded-lg border border-slate-700 px-3 py-2 text-xs text-slate-200 hover:border-emerald-400">Copy Address</button></div><p class="break-all rounded-lg border border-slate-700 bg-slate-950/60 px-3 py-3 font-mono text-sm text-emerald-200">' + demoAddress + '</p><div class="rounded-xl border border-slate-800 bg-slate-950/70 p-3 text-center"><p class="mb-3 text-xs uppercase tracking-[0.25em] text-slate-400">QR Code</p><canvas id="seller-demo-qr" class="mx-auto block rounded-lg bg-white p-2" width="180" height="180"></canvas><p class="mt-3 text-xs text-slate-400">Demo URI: ' + qrData + '</p></div><div class="flex gap-3"><button type="button" data-copy-demo-amount="true" class="flex-1 rounded-lg border border-slate-700 px-3 py-2 text-sm text-slate-200 hover:border-emerald-400">Copy Amount</button><button type="button" id="seller-payment-confirm-btn" class="flex-1 rounded-lg bg-emerald-600 px-4 py-3 text-sm font-bold text-white hover:bg-emerald-500">I\'ve Sent the Payment</button></div><div class="rounded-lg border border-slate-800 bg-slate-950/60 p-3 text-sm text-slate-300"><p class="font-semibold text-amber-200">Status: WAITING FOR PAYMENT</p><p class="mt-2 text-xs text-slate-400">Timer: <span id="seller-demo-timer">24:00:00</span></p></div></div></div>';
+        step.innerHTML = reviewHtml;
+        var demoAmountDetails = document.createElement('p');
+        demoAmountDetails.className = 'mt-2 text-sm text-slate-300';
+        demoAmountDetails.textContent = 'Amount: $' + amountText + ' USD';
+        document.getElementById('seller-demo-qr').closest('.rounded-xl').insertAdjacentElement('beforebegin', demoAmountDetails);
+        var demoNetworkDetails = document.createElement('p');
+        demoNetworkDetails.className = 'mt-1 text-sm text-slate-300';
+        demoNetworkDetails.textContent = 'Network: ' + selectedNetwork;
+        demoAmountDetails.insertAdjacentElement('afterend', demoNetworkDetails);
+        Array.from(step.querySelectorAll('p')).forEach(function (paragraph) {
+          if (paragraph.textContent.trim() === 'Status: WAITING FOR PAYMENT') {
+            paragraph.textContent = 'Status: WAITING FOR DEMO PAYMENT';
+          }
+          if (paragraph.textContent.trim().startsWith('Demo URI:')) {
+            paragraph.textContent = 'Demo URI: ' + qrData;
+          }
+        });
+        window.EscrowTransactions.createDemoQr(qrData).then(function (qrDataUrl) {
+          var image = new Image();
+          image.onload = function () {
+            var canvas = document.getElementById('seller-demo-qr');
+            if (canvas) canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+          };
+          image.src = qrDataUrl;
+        }).catch(function (error) {
+          console.warn('Demo QR generation failed', error);
+        });
+        document.querySelector('[data-copy-demo-address="true"]').addEventListener('click', function () {
+          navigator.clipboard.writeText(demoAddress).catch(function () {});
+        });
+        document.querySelector('[data-copy-demo-amount="true"]').addEventListener('click', function () {
+          navigator.clipboard.writeText(amountText + ' ' + selectedAsset).catch(function () {});
+        });
+        var timerNode = document.getElementById('seller-demo-timer');
+        if (timerNode) {
+          var remaining = 24 * 60 * 60;
+          var interval = setInterval(function () {
+            if (!document.getElementById('seller-demo-timer')) return clearInterval(interval);
+            remaining = Math.max(0, remaining - 1);
+            var hours = String(Math.floor(remaining / 3600)).padStart(2, '0');
+            var minutes = String(Math.floor((remaining % 3600) / 60)).padStart(2, '0');
+            var seconds = String(remaining % 60).padStart(2, '0');
+            document.getElementById('seller-demo-timer').textContent = hours + ':' + minutes + ':' + seconds;
+          }, 1000);
+        }
+        var paymentConfirmButton = document.getElementById('seller-payment-confirm-btn');
+        if (paymentConfirmButton) {
+          paymentConfirmButton.addEventListener('click', async function () {
+            paymentConfirmButton.disabled = true;
+            paymentConfirmButton.textContent = 'Verifying demo payment...';
+            try {
+              await new Promise(function (resolve) { setTimeout(resolve, 700); });
+              var securedTransaction = await window.EscrowTransactions.depositSellerCollateral(escrowId, {
+                selectedAsset: selectedAsset,
+                selectedNetwork: selectedNetwork,
+                demoAddress: demoAddress,
+                demoQrData: qrData,
+                mockPaymentReference: 'DEMO-TX-' + Math.random().toString(36).slice(2, 10).toUpperCase(),
+                sellerCollateralAmount: Math.round(collateralAmount * 100),
+                sellerCollateralPercentage: 30,
+                mockPaymentStatus: 'CONFIRMED',
+                sellerCollateralStatus: 'SECURED'
+              });
+              var createdEscrowId = document.getElementById('direct-link-created-id');
+              if (createdEscrowId && createdEscrowId.textContent === escrowId) {
+                document.getElementById('direct-link-created-state').textContent = securedTransaction.status;
+                document.getElementById('direct-link-created-url').value = securedTransaction.paymentLink || '';
+                document.getElementById('open-direct-link-btn').href = securedTransaction.paymentLink || '#';
+                document.getElementById('direct-link-created-message').textContent = 'Seller collateral secured. The buyer payment link is ready to share.';
+                document.getElementById('direct-link-sharing-controls').classList.remove('hidden');
+                document.getElementById('direct-link-deposit-collateral-btn').classList.add('hidden');
+              }
+              modal.classList.add('hidden');
+              await refreshVendorTransactions();
+            } catch (error) {
+              paymentConfirmButton.disabled = false;
+              paymentConfirmButton.textContent = 'I\'ve Sent the Payment';
+              if (vendorTransactionStatus) vendorTransactionStatus.textContent = error.message || 'Demo payment confirmation failed.';
+            }
+          });
+        }
+      });
+    }
+    modal.classList.remove('hidden');
+  }
+
+  function openSellerCollateralDeposit(transaction) {
+    var modal = ensureSellerCollateralModal();
+    renderSellerCollateralStep(transaction.escrowId, transaction);
+    modal.classList.remove('hidden');
+  }
+
   /* ── Direct Links: delivery terms controls ── */
   function bindDirectLinkPillGroup(selector) {
     var pills = document.querySelectorAll(selector);
@@ -756,12 +937,12 @@ document.addEventListener('DOMContentLoaded', function () {
       if (quantity) quantity.value = '1';
       var price = consignment.querySelector('.consignment-price');
       if (price) price.value = '10000';
-      updateConsignmentTotal(consignment);
     }
 
     var currency = document.getElementById('transaction-currency');
     if (currency) currency.value = 'USD';
-    updateFinancialSummary();
+    var priceInput = document.querySelector('.consignment-price');
+    if (priceInput) priceInput.dispatchEvent(new Event('input', { bubbles: true }));
     validateDirectLinkForm();
   }
 
@@ -807,7 +988,7 @@ document.addEventListener('DOMContentLoaded', function () {
       button.disabled = true;
       button.textContent = 'Creating Escrow…';
     }
-    if (status) status.textContent = 'Saving transaction and generating its private buyer link…';
+    if (status) status.textContent = 'Saving escrow. Seller collateral must be secured before a buyer link is created.';
 
     var payload = buildDirectEscrowPayload();
 
@@ -818,6 +999,11 @@ document.addEventListener('DOMContentLoaded', function () {
       document.getElementById('direct-link-created-url').value = created.paymentLink || '';
       document.getElementById('open-direct-link-btn').href = created.paymentLink || '#';
       document.getElementById('open-direct-link-btn').classList.toggle('pointer-events-none', !created.paymentLink);
+      document.getElementById('direct-link-created-message').textContent = created.paymentLink
+        ? 'Seller collateral secured. The buyer payment link is ready to share.'
+        : 'Seller collateral required. Secure your 30% seller collateral before inviting the buyer.';
+      document.getElementById('direct-link-sharing-controls').classList.toggle('hidden', !created.paymentLink);
+      document.getElementById('direct-link-deposit-collateral-btn').classList.toggle('hidden', Boolean(created.paymentLink));
       document.getElementById('direct-link-created-funding').textContent = 'Invoice ' + created.invoiceAmount + ' ' + created.currency + ' · Buyer collateral ' + created.buyerCollateral + ' ' + created.currency + ' · Buyer total due ' + created.totalRequiredFromBuyer + ' ' + created.currency + ' · Seller collateral ' + created.sellerCollateral + ' ' + created.currency + ' · Payment: ' + created.paymentStatus + ' (MOCK)';
       if (status) {
         status.textContent = created.paymentLink
@@ -825,6 +1011,11 @@ document.addEventListener('DOMContentLoaded', function () {
           : 'Escrow created. Buyer payment link stays hidden until the seller deposits the required 30% collateral.';
       }
       if (button) button.textContent = 'Escrow Created';
+      if (!created.paymentLink) {
+        document.getElementById('direct-link-deposit-collateral-btn').onclick = function () {
+          openSellerCollateralDeposit(created);
+        };
+      }
       refreshVendorTransactions();
       if (shareButton && navigator.share) shareButton.dataset.shareUrl = created.paymentLink || '';
     }).catch(function (error) {
@@ -947,19 +1138,16 @@ document.addEventListener('DOMContentLoaded', function () {
         depositCollateral.type = 'button';
         depositCollateral.className = 'rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-500';
         depositCollateral.textContent = 'Deposit Seller Collateral';
-        depositCollateral.addEventListener('click', async function () {
-          try {
-            depositCollateral.disabled = true;
-            depositCollateral.textContent = 'Depositing…';
-            await window.EscrowTransactions.depositSellerCollateral(transaction.escrowId);
-            await refreshVendorTransactions();
-          } catch (error) {
-            depositCollateral.disabled = false;
-            depositCollateral.textContent = 'Deposit Seller Collateral';
-            if (vendorTransactionStatus) vendorTransactionStatus.textContent = error.message || 'Seller collateral could not be deposited.';
-          }
+        depositCollateral.addEventListener('click', function () {
+          openSellerCollateralDeposit(transaction);
         });
         card.appendChild(depositCollateral);
+      }
+      if (transaction.sellerCollateralStatus === 'SECURED' && !transaction.paymentLink) {
+        var secureStatus = document.createElement('p');
+        secureStatus.className = 'text-xs text-emerald-200';
+        secureStatus.textContent = 'Seller collateral secured · buyer link will be generated';
+        card.appendChild(secureStatus);
       }
       if (transaction.status === 'BUYER_FUNDED') {
         var activate = document.createElement('button');

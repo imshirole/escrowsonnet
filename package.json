@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "start": "node --env-file-if-exists=.env server/start.js",
-    "test": "node --test server/test/*.test.js"
+    "test": "node --test server/test/*.test.js",
+    "reset:demo": "NODE_ENV=development node scripts/reset-demo-data.js"
   },
   "dependencies": {
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "qrcode": "^1.5.4"
   }
 }

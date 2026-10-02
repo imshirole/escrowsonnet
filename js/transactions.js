@@ -32,6 +32,14 @@
       var result = await requestJSON('/api/transactions');
       return result.transactions;
     },
+    async createDemoQr(demoUri) {
+      var result = await requestJSON('/api/demo-qr', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ demoUri: demoUri })
+      });
+      return result.qrDataUrl;
+    },
     async setVendorStatus(escrowId, status, reason) {
       var result = await requestJSON('/api/transactions/' + encodeURIComponent(escrowId) + '/status', {
         method: 'POST',
@@ -40,8 +48,12 @@
       });
       return result.transaction;
     },
-    async depositSellerCollateral(escrowId) {
-      var result = await requestJSON('/api/transactions/' + encodeURIComponent(escrowId) + '/deposit-collateral', { method: 'POST' });
+    async depositSellerCollateral(escrowId, details) {
+      var result = await requestJSON('/api/transactions/' + encodeURIComponent(escrowId) + '/deposit-collateral', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(details || {})
+      });
       return result.transaction;
     },
     async refundVendorTransaction(escrowId) {
