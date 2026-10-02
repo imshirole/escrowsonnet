@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-[#05070f] text-white">
+<body class="bg-[#05070f] text-white" data-dashboard-role="buyer">
 
 <div id="vendor-dashboard-content" class="h-screen flex flex-col bg-[#05070f]">
     <style>
@@ -68,7 +68,7 @@
                 <div class="relative overflow-hidden h-10">
                     <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(16,185,129,0.08),transparent_35%)]"></div>
                     <div class="absolute inset-y-0 whitespace-nowrap text-[11px] leading-5 font-mono uppercase text-slate-300 flex items-center gap-8 animate-[vendor-marquee_28s_linear_infinite]">
-                        <span>â€¢ LON-DXB: $2.4M Verified [Address A] â€¢</span>
+                        <span>â€¢ LON-DXB: Mock payment pending â€¢</span>
                         <span>SZN-LOS: $840K Awaiting Inspection Report â€¢</span>
                         <span>HKG-RTM: 1.2% Gas Optimised â€¢</span>
                         <span>DXB-MEL: 620K Secure Release Pending â€¢</span>
@@ -205,10 +205,25 @@
                     <h1 class="text-3xl sm:text-4xl font-extrabold text-white leading-tight">Welcome back, Operational Node 04</h1>
                 </div>
                 <div class="rounded-3xl border border-slate-800/70 bg-slate-950/60 px-6 py-4 shadow-[0_30px_80px_-50px_rgba(16,185,129,0.45)]">
-                    <p class="text-xs uppercase tracking-[0.35em] text-slate-400 mb-2">Sonet Engine Active</p>
-                    <p class="text-sm font-semibold text-emerald-300">Block Confirmations: <span class="text-white">100%</span></p>
+                    <p class="text-xs uppercase tracking-[0.35em] text-slate-400 mb-2">Transaction Service</p>
+                    <p class="text-sm font-semibold text-amber-200">Mock Payment Mode</p>
                 </div>
             </div>
+
+            <section class="mb-6 rounded-xl border border-emerald-500/20 bg-slate-950/50 p-5 space-y-4" aria-labelledby="buyer-escrow-heading">
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <p class="text-xs uppercase tracking-[0.3em] text-emerald-300">Buyer payment link</p>
+                        <h2 id="buyer-escrow-heading" class="mt-1 text-lg font-bold text-white">Review your transaction</h2>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-3 sm:flex-row">
+                    <input id="buyer-escrow-id" type="text" placeholder="ESC-2026-…" class="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 font-mono text-sm text-white placeholder:text-slate-500" aria-label="Escrow payment link ID">
+                    <button id="buyer-open-payment-link" type="button" class="rounded-lg border border-slate-700 px-4 py-3 text-sm font-semibold text-slate-200 hover:border-emerald-400">Open payment link</button>
+                </div>
+                <p class="text-sm text-slate-400">Open the unique payment link sent by your vendor to review the invoice, 30% collateral, delivery terms, and current mock payment status. No login is required to review a valid link.</p>
+                <p class="text-xs text-amber-200">Mock Payment Mode · No funds are moved.</p>
+            </section>
 
             <div class="grid gap-6 xl:grid-cols-3">
                 <section class="relative rounded-[28px] border border-slate-800/70 bg-slate-950/60 p-6 overflow-hidden shadow-[0_24px_80px_-50px_rgba(16,185,129,0.35)]">
@@ -233,7 +248,7 @@
                             </div>
                             <div>
                                 <p class="text-4xl font-black text-white">$0.00 USD</p>
-                                <p class="text-sm text-slate-400">Secured in Address B</p>
+                                <p class="text-sm text-slate-400">Vendor collateral held by contract</p>
                             </div>
                         </div>
                     </div>
@@ -275,7 +290,7 @@
                     <!-- Empty state -->
                     <div class="grid grid-cols-7 gap-4 text-sm text-slate-300 items-center py-8">
                         <div class="col-span-7 text-center text-slate-400">
-                            No transactions found. Active smart contracts will appear here once initiated.
+                            No transactions found. Escrow payment-link transactions will appear here once created.
                         </div>
                     </div>
                 </div>
@@ -457,7 +472,7 @@
                                         <div class="text-4xl mb-3 text-slate-500">
                                             <i class="fa-regular fa-copy"></i>
                                         </div>
-                                        <p>No batch operational orders to display. Active items will load into this grid once initialized on-chain.</p>
+                                        <p>No batch operational orders to display. Active items will load here once created.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -566,7 +581,6 @@
                                     <option value="USD" selected>USD â€” US Dollar</option>
                                     <option value="EUR">EUR â€” Euro</option>
                                     <option value="GBP">GBP â€” British Pound</option>
-                                    <option value="USDC">USDC â€” USD Coin</option>
                                 </select>
                             </div>
                         </div>
@@ -583,7 +597,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs text-slate-500 mb-1">Delivery / Shipping Timeline</label>
-                                <input type="text" placeholder="e.g., 30 days from smart contract escrow lock"
+                                <input type="text" placeholder="e.g., 30 days from payment confirmation"
                                        class="w-full bg-slate-950/60 border border-slate-800/60 text-slate-200 px-4 py-2.5 rounded-lg text-sm focus:outline-none focus:border-emerald-500/50 placeholder:text-slate-500">
                             </div>
                         </div>
@@ -717,7 +731,7 @@
 
                             <!-- Watermark Label Header -->
                             <div class="flex items-center justify-center">
-                                <span class="inline-block text-[10px] uppercase tracking-[0.45em] text-emerald-400/50 font-semibold border border-emerald-400/10 bg-emerald-400/5 px-4 py-1.5 rounded-full">TRUSTLOCK PROFORMA // SECURED SMART CONTRACT ROUTE</span>
+                                <span class="inline-block text-[10px] uppercase tracking-[0.45em] text-emerald-400/50 font-semibold border border-emerald-400/10 bg-emerald-400/5 px-4 py-1.5 rounded-full">TRUSTLOCK PROFORMA // PAYMENT LINK</span>
                             </div>
 
                             <!-- Spacer / decorative divider -->
@@ -988,7 +1002,7 @@
                 <h4 class="text-sm uppercase tracking-[0.3em] text-slate-400 font-semibold">Fee Breakdown Estimate</h4>
                 <div class="space-y-3">
                     <div class="flex items-center justify-between text-sm">
-                        <span class="text-slate-400">Escrow Service Fee (1.5%)</span>
+                        <span class="text-slate-400">Illustrative fee estimate (not charged)</span>
                         <span id="sim-result-escrow" class="text-slate-200 font-mono">$0.00 USD</span>
                     </div>
                     <div class="flex items-center justify-between text-sm">
@@ -1505,7 +1519,7 @@
 
             <!-- Top Explanatory Disclaimer Banner -->
             <div class="bg-slate-900/30 border border-slate-800/60 rounded-xl p-4 text-slate-400 text-sm mt-2">
-                When you accept lender financing on an order, a slice of each milestone release is routed directly to the lender on-chain (plus a 0.25% TrustLock handling fee). This page mirrors exactly what the router is moving on your behalf â€” nothing more.
+                Lender routing is not enabled in this initial escrow contract. This view is retained for future financing integration and does not alter contract settlement.
             </div>
 
             <!-- Metric Columns Row (2 Cards) -->
@@ -1524,7 +1538,7 @@
             <div class="flex gap-2 flex-wrap">
                 <button class="funded-repayments-tab text-sm px-4 py-2 text-slate-400 transition-all cursor-pointer bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 rounded-lg">Agreements (0)</button>
                 <button class="funded-repayments-tab text-sm px-4 py-2 text-slate-400 transition-all cursor-pointer bg-slate-950/60 border border-slate-800/60 rounded-lg hover:border-slate-600">Per-Milestone (0)</button>
-                <button class="funded-repayments-tab text-sm px-4 py-2 text-slate-400 transition-all cursor-pointer bg-slate-950/60 border border-slate-800/60 rounded-lg hover:border-slate-600">On-chain (0)</button>
+                <button class="funded-repayments-tab text-sm px-4 py-2 text-slate-400 transition-all cursor-pointer bg-slate-950/60 border border-slate-800/60 rounded-lg hover:border-slate-600">Payment status (0)</button>
             </div>
 
             <!-- Bottom Main Ledger Box Empty State -->
@@ -1544,8 +1558,8 @@
                         <i class="fa-solid fa-shield-halved"></i>
                     </div>
                     <div>
-                        <h2 class="text-xl font-bold text-slate-100">Blockchain Proof Lookup</h2>
-                        <p class="text-sm text-slate-400 mt-1">Enter a transaction ID to view its full on-chain proof chain and download a tamper-proof certificate.</p>
+                        <h2 class="text-xl font-bold text-slate-100">Transaction Lookup</h2>
+                        <p class="text-sm text-slate-400 mt-1">Enter an escrow ID to review its recorded transaction history.</p>
                     </div>
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3 mt-6">
@@ -1709,7 +1723,7 @@
                 <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5"><i class="fa-solid fa-building-columns text-emerald-400 text-xl"></i><h3 class="text-base font-semibold text-slate-100 mt-4">Trade Financing</h3><p class="text-sm text-slate-400 mt-2">Lender slices, repayment matching, milestone deductions.</p></div>
                 <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5"><i class="fa-solid fa-shield-halved text-emerald-400 text-xl"></i><h3 class="text-base font-semibold text-slate-100 mt-4">Disputes &amp; Claims</h3><p class="text-sm text-slate-400 mt-2">Evidence guidelines, mediation flow, chargeback rules.</p></div>
                 <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5"><i class="fa-solid fa-users text-emerald-400 text-xl"></i><h3 class="text-base font-semibold text-slate-100 mt-4">Network &amp; RFQs</h3><p class="text-sm text-slate-400 mt-2">Buyer verification, custom quote links, proposals.</p></div>
-                <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5"><i class="fa-solid fa-terminal text-emerald-400 text-xl"></i><h3 class="text-base font-semibold text-slate-100 mt-4">Security &amp; API</h3><p class="text-sm text-slate-400 mt-2">Embed widget setup, webhooks, on-chain proof lookup.</p></div>
+                <div class="bg-slate-900/40 border border-slate-800/60 rounded-xl p-5"><i class="fa-solid fa-terminal text-emerald-400 text-xl"></i><h3 class="text-base font-semibold text-slate-100 mt-4">Security &amp; API</h3><p class="text-sm text-slate-400 mt-2">Payment-link access and transaction status history.</p></div>
             </div>
 
             
@@ -1717,9 +1731,9 @@
                 <h3 class="text-lg font-semibold text-slate-100 mb-4">Frequently Asked Questions</h3>
                 <div class="divide-y divide-slate-800/60">
                     <div class="help-faq-item"><button type="button" class="w-full flex items-center justify-between gap-4 py-4 text-left text-sm font-semibold text-slate-200"><span>What happens if a buyer refuses to confirm delivery?</span><i class="fa-solid fa-chevron-down help-faq-caret text-slate-400 transition-transform"></i></button><p class="help-faq-answer hidden pb-4 text-sm leading-relaxed text-slate-400">Escrow enters the default 14-day inspection window. If no dispute is filed with evidence, funds release automatically.</p></div>
-                    <div class="help-faq-item"><button type="button" class="w-full flex items-center justify-between gap-4 py-4 text-left text-sm font-semibold text-slate-200"><span>How does the 0.25% lender handling fee work?</span><i class="fa-solid fa-chevron-down help-faq-caret text-slate-400 transition-transform"></i></button><p class="help-faq-answer hidden pb-4 text-sm leading-relaxed text-slate-400">It is automatically routed from funded milestone releases via the smart contract router.</p></div>
-                    <div class="help-faq-item"><button type="button" class="w-full flex items-center justify-between gap-4 py-4 text-left text-sm font-semibold text-slate-200"><span>Can a Proforma Invoice be edited after funding?</span><i class="fa-solid fa-chevron-down help-faq-caret text-slate-400 transition-transform"></i></button><p class="help-faq-answer hidden pb-4 text-sm leading-relaxed text-slate-400">No. Funded invoices lock on-chain. Counter-proposals must be submitted as a new draft.</p></div>
-                    <div class="help-faq-item"><button type="button" class="w-full flex items-center justify-between gap-4 py-4 text-left text-sm font-semibold text-slate-200"><span>Where do I find on-chain proof certificates?</span><i class="fa-solid fa-chevron-down help-faq-caret text-slate-400 transition-transform"></i></button><p class="help-faq-answer hidden pb-4 text-sm leading-relaxed text-slate-400">Use the Proof Explorer under Tools &amp; Insights to view hashes and download certificates.</p></div>
+                    <div class="help-faq-item"><button type="button" class="w-full flex items-center justify-between gap-4 py-4 text-left text-sm font-semibold text-slate-200"><span>Is lender routing enabled?</span><i class="fa-solid fa-chevron-down help-faq-caret text-slate-400 transition-transform"></i></button><p class="help-faq-answer hidden pb-4 text-sm leading-relaxed text-slate-400">No. The initial contract supports buyer/vendor funding, delivery, settlement, expiry, and disputes only.</p></div>
+                    <div class="help-faq-item"><button type="button" class="w-full flex items-center justify-between gap-4 py-4 text-left text-sm font-semibold text-slate-200"><span>Can a transaction be edited after payment begins?</span><i class="fa-solid fa-chevron-down help-faq-caret text-slate-400 transition-transform"></i></button><p class="help-faq-answer hidden pb-4 text-sm leading-relaxed text-slate-400">Payment-pending transactions cannot be edited. Cancel the transaction and create a corrected one.</p></div>
+                    <div class="help-faq-item"><button type="button" class="w-full flex items-center justify-between gap-4 py-4 text-left text-sm font-semibold text-slate-200"><span>Where can I review transaction history?</span><i class="fa-solid fa-chevron-down help-faq-caret text-slate-400 transition-transform"></i></button><p class="help-faq-answer hidden pb-4 text-sm leading-relaxed text-slate-400">Open the buyer payment link or the vendor's saved transaction list to review status history.</p></div>
                 </div>
             </div>
 
@@ -1779,8 +1793,8 @@
 
             <div class="bg-slate-900/40 border border-slate-800/60 rounded-2xl p-6 space-y-4">
                 <div class="flex items-center gap-3"><i class="fa-solid fa-coins text-amber-400"></i><h2 class="text-lg font-semibold text-slate-100">Settlement &amp; Payout</h2><span class="text-xs font-semibold text-amber-200 bg-amber-500/10 border border-amber-500/30 rounded-full px-3 py-1">STANDARD</span></div>
-                <h3 class="font-semibold text-slate-200">Released in USDC or USDT on Polygon</h3>
-                <div class="bg-slate-950/50 border border-slate-800/60 rounded-xl p-4 text-sm text-slate-400"><span class="font-semibold text-slate-200">What is deducted</span> - A 1.0% escrow service fee is taken from your amount at settlement...</div>
+                <h3 class="font-semibold text-slate-200">Payment provider: MOCK</h3>
+                <div class="bg-slate-950/50 border border-slate-800/60 rounded-xl p-4 text-sm text-slate-400"><span class="font-semibold text-slate-200">Current contract</span> - No platform fee is deducted. Network gas is paid separately by each transaction sender.</div>
                 <button type="button" class="px-5 py-2.5 rounded-lg border border-slate-700 text-slate-300 hover:border-slate-500 transition-colors">Manage payout destination</button>
             </div>
 
@@ -1846,7 +1860,6 @@
                             <option value="USD" selected>USD â€” US Dollar</option>
                             <option value="EUR">EUR â€” Euro</option>
                             <option value="GBP">GBP â€” British Pound</option>
-                            <option value="USDC">USDC â€” USD Coin</option>
                         </select>
                     </div>
                 </div>
@@ -1892,11 +1905,8 @@
                 <div>
                     <label class="block text-xs text-slate-500 mb-2">Payment Method</label>
                     <div class="flex gap-2">
-                        <button type="button" class="flex-1 px-3 py-2 rounded-lg bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 text-sm font-medium transition-colors cursor-pointer">
-                            ðŸ’³ Fiat (Card / Bank)
-                        </button>
-                        <button type="button" class="flex-1 px-3 py-2 rounded-lg bg-slate-950/60 text-slate-400 border border-slate-800/60 text-sm font-medium hover:border-slate-600 transition-colors cursor-pointer">
-                            ðŸ“ Crypto (USDC/USDT)
+                        <button type="button" disabled class="flex-1 px-3 py-2 rounded-lg bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 text-sm font-medium">
+                            Mock payment placeholder
                         </button>
                     </div>
                 </div>
@@ -1917,7 +1927,9 @@
         </div>
     </div>
 
+    <script src="js/transactions.js"></script>
     <script src="js/vendor.js"></script>
+    <script src="js/buyer-dashboard.js"></script>
 </div>
 
 </body>

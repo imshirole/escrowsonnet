@@ -163,23 +163,112 @@ document.addEventListener('DOMContentLoaded', function () {
   /* ── Create Order form ── */
   var createOrderForm = document.getElementById('create-order-form');
   if (createOrderForm) {
-    createOrderForm.addEventListener('submit', function (e) {
+    var dealValueInput = document.getElementById('form-deal-val');
+    var buyerCollateralOutput = document.getElementById('form-buyer-col');
+    var sellerCollateralOutput = document.getElementById('form-seller-col');
+    var currencyInput = document.getElementById('form-currency');
+    var createOrderButton = createOrderForm.querySelector('button[type="submit"]');
+    var createResult = document.getElementById('public-create-result');
+    var createLink = document.getElementById('public-create-link');
+    var linkActions = document.getElementById('public-link-actions');
+
+    function updatePublicCollateralPreview() {
+      var invoice = Math.max(0, parseFloat(dealValueInput?.value) || 0);
+      var collateral = invoice * 0.3;
+      var currency = currencyInput?.value || 'USD';
+      var formatted = new Intl.NumberFormat('en-US', { style: 'currency', currency: currency }).format(collateral);
+      if (buyerCollateralOutput) buyerCollateralOutput.textContent = formatted;
+      if (sellerCollateralOutput) sellerCollateralOutput.textContent = formatted;
+    }
+
+    if (dealValueInput) dealValueInput.addEventListener('input', updatePublicCollateralPreview);
+    if (currencyInput) currencyInput.addEventListener('change', updatePublicCollateralPreview);
+    updatePublicCollateralPreview();
+
+    createOrderForm.addEventListener('submit', async function (e) {
       e.preventDefault();
-      alert('Your escrow order request has been received. Our team will follow up with your custom transaction details.');
+      if (!window.EscrowTransactions) {
+        if (createResult) {
+          createResult.classList.remove('hidden');
+          createResult.textContent = 'Transaction service is unavailable. Start the app with npm start and retry.';
+        }
+        return;
+      }
+      if (createOrderButton) createOrderButton.disabled = true;
+      if (createResult) {
+        createResult.classList.remove('hidden');
+        createResult.textContent = 'Creating transaction…';
+      }
+      if (createLink) createLink.classList.add('hidden');
+      if (linkActions) linkActions.classList.add('hidden');
+      try {
+        var created = await window.EscrowTransactions.create({
+          vendorName: document.getElementById('form-vendor-name').value.trim(),
+          buyerName: document.getElementById('form-buyer-name').value.trim(),
+          buyerContact: document.getElementById('form-buyer-contact').value.trim(),
+          invoiceAmount: dealValueInput.value,
+          currency: currencyInput.value,
+          description: document.getElementById('form-deal-desc').value.trim(),
+          deliveryTerms: document.getElementById('form-delivery-terms').value.trim(),
+          expectedDeliveryDate: document.getElementById('form-delivery-date').value
+        });
+        if (createLink) {
+          createLink.href = created.paymentLink;
+          createLink.textContent = created.paymentLink;
+          createLink.classList.remove('hidden');
+        }
+        document.getElementById('public-open-link').href = created.paymentLink;
+        if (linkActions) linkActions.classList.remove('hidden');
+        if (createResult) createResult.textContent = 'Escrow Created · ' + created.escrowId + '. Share this payment link with the buyer.';
+      } catch (error) {
+        if (createResult) createResult.textContent = error.message || 'Escrow could not be created.';
+      } finally {
+        if (createOrderButton) createOrderButton.disabled = false;
+      }
+    });
+
+    document.getElementById('public-copy-link')?.addEventListener('click', async function () {
+      if (createLink?.href) await navigator.clipboard.writeText(createLink.href);
+    });
+    document.getElementById('public-share-link')?.addEventListener('click', async function () {
+      if (!createLink?.href) return;
+      if (navigator.share) await navigator.share({ title: 'Escrow Sonet transaction', url: createLink.href });
+      else await navigator.clipboard.writeText(createLink.href);
     });
   }
 
   /* ── Track Order form ── */
   var trackOrderForm = document.getElementById('track-order-form');
   if (trackOrderForm) {
-    trackOrderForm.addEventListener('submit', function (e) {
+    trackOrderForm.addEventListener('submit', async function (e) {
       e.preventDefault();
       var spinner = document.getElementById('track-spinner');
-      if (spinner) {
-        spinner.classList.remove('hidden');
-        setTimeout(function () { spinner.classList.add('hidden'); }, 1200);
+      var result = document.getElementById('track-order-result');
+      var escrowId = trackOrderForm.querySelector('input')?.value.trim();
+      if (result) {
+        result.classList.remove('hidden');
+        result.textContent = 'Loading transaction…';
       }
-      alert('Tracking request submitted. If the deal exists, details will be loaded shortly.');
+      if (spinner) spinner.classList.remove('hidden');
+      try {
+        var response = await fetch('/api/payment-links/' + encodeURIComponent(escrowId));
+        var text = await response.text();
+        var payload = {};
+        if (text) {
+          try {
+            payload = JSON.parse(text);
+          } catch (parseError) {
+            throw new Error('The server returned an invalid response while loading the transaction.');
+          }
+        }
+        if (!response.ok || payload.ok === false) throw new Error(payload.error || 'Transaction could not be loaded.');
+        var transaction = payload.transaction;
+        if (result) result.textContent = 'Escrow ' + transaction.escrowId + ' · ' + transaction.status + ' · Payment ' + transaction.paymentStatus + ' · Invoice ' + transaction.invoiceAmount + ' ' + transaction.currency + ' · buyer collateral ' + transaction.buyerCollateral + ' ' + transaction.currency + ' · seller collateral ' + transaction.sellerCollateral + ' ' + transaction.currency;
+      } catch (error) {
+        if (result) result.textContent = error.message || 'Transaction could not be loaded.';
+      } finally {
+        if (spinner) spinner.classList.add('hidden');
+      }
     });
   }
 

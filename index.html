@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Escrow Sonet | Blockchain-Secured Cross-Border Escrow Infrastructure</title>
+    <title>Escrow Sonet | Cross-Border Escrow Transactions</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
@@ -148,7 +148,7 @@
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                     </span>
-                    <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider font-mono">Managed Blockchain Escrow</span>
+                    <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider font-mono">Managed Escrow Transactions</span>
                 </div>
 
                 <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight leading-tight">
@@ -157,13 +157,13 @@
                 </h1>
 
                 <p class="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                    Replace outdated Letters of Credit with milestone-based smart-monitored escrow vaults—securing cross-border transactions from Purchase Order to final delivery with zero blockchain complexity.
+                    Create clear cross-border escrow transactions with buyer-facing payment links, separately tracked invoice and collateral amounts, and delivery terms.
                 </p>
 
                 <!-- Value propositions tags -->
                 <div class="flex flex-wrap justify-center lg:justify-start gap-4 text-xs font-mono text-gray-300">
                     <span class="flex items-center bg-brand-surface/40 border border-brand-border/60 rounded-lg px-3 py-2">
-                        <i class="fa-solid fa-link text-brand-500 mr-2"></i> Blockchain-Verified
+                        <i class="fa-solid fa-link text-brand-500 mr-2"></i> Shareable Payment Links
                     </span>
                     <span class="flex items-center bg-brand-surface/40 border border-brand-border/60 rounded-lg px-3 py-2">
                         <i class="fa-solid fa-file-shield text-emerald-400 mr-2"></i> Document-Gated Milestones
@@ -197,7 +197,7 @@
                         <div class="flex justify-between items-center pb-4 border-b border-brand-border">
                             <div>
                                 <h3 class="font-bold text-white text-base">Trade Order #ES-2026</h3>
-                                <p class="text-xs text-gray-500 font-mono">Value: <span id="current-hero-value">$1,000.00</span> USDT</p>
+                                <p class="text-xs text-gray-500 font-mono">Invoice example: <span id="current-hero-value">$1,000.00</span></p>
                             </div>
                             <span class="text-xs bg-brand-500/10 text-brand-500 border border-brand-500/30 px-2.5 py-1 rounded-lg font-semibold uppercase">Securing</span>
                         </div>
@@ -209,7 +209,7 @@
                                 <div class="flex justify-between items-center mb-1.5">
                                     <span class="text-xs font-semibold text-gray-300 flex items-center">
                                         <span class="w-4 h-4 rounded-full bg-brand-500 text-white text-[9px] flex items-center justify-center font-bold mr-1.5">A</span>
-                                        Buyer Deposit Address (A)
+                                        Buyer Contract Deposit
                                     </span>
                                     <span class="text-[10px] font-mono text-emerald-400 flex items-center">
                                         <i class="fa-solid fa-circle-check mr-1 text-[9px]"></i> Deposited
@@ -231,7 +231,7 @@
                                 <div class="flex justify-between items-center mb-1.5">
                                     <span class="text-xs font-semibold text-gray-300 flex items-center">
                                         <span class="w-4 h-4 rounded-full bg-emerald-500 text-white text-[9px] flex items-center justify-center font-bold mr-1.5">B</span>
-                                        Seller Collateral Address (B)
+                                        Vendor Collateral Deposit
                                     </span>
                                     <span class="text-[10px] font-mono text-amber-400 animate-pulse flex items-center">
                                         <i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Awaiting
@@ -287,8 +287,8 @@
                 <p class="text-xs md:text-sm font-mono text-gray-500 uppercase tracking-widest mt-2">Trade Finance Gap</p>
             </div>
             <div>
-                <p class="text-4xl md:text-5xl font-black text-emerald-400">1.5%</p>
-                <p class="text-xs md:text-sm font-mono text-gray-500 uppercase tracking-widest mt-2">All-In Escrow Fee</p>
+                <p class="text-4xl md:text-5xl font-black text-emerald-400">30%</p>
+                <p class="text-xs md:text-sm font-mono text-gray-500 uppercase tracking-widest mt-2">Collateral Per Party</p>
             </div>
         </div>
     </div>
@@ -329,7 +329,7 @@
                 </div>
                 <h3 class="text-lg font-bold text-white mb-2">For Sellers: Eliminate Fake Buyers</h3>
                 <p class="text-sm text-gray-400 leading-relaxed flex-grow">
-                    See the buyer's full payment and collateral locked in Address A before you ship goods. No fake payment screenshots, no cancelled bank wires, no chargeback fraud.
+                    See the buyer's invoice payment and separate 30% collateral confirmed in the escrow contract before delivery.
                 </p>
                 <div class="mt-6 pt-6 border-t border-brand-border text-xs font-mono text-emerald-400 flex items-center">
                     <i class="fa-solid fa-check-circle mr-2"></i>
@@ -468,7 +468,7 @@
                         <!-- Metrics Grid -->
                         <div class="grid grid-cols-2 gap-4 py-6">
                             <div>
-                                <span class="text-xs text-gray-400 font-mono uppercase tracking-wider block">Escrow Fee (1.5%)</span>
+                                <span class="text-xs text-gray-400 font-mono uppercase tracking-wider block">Illustrative fee estimate (not charged)</span>
                                 <span class="text-2xl font-bold text-emerald-400 font-mono" id="sonet-cost">$75.00</span>
                             </div>
                             <div>
@@ -481,7 +481,7 @@
                         <ul class="space-y-3.5 text-xs text-gray-300">
                             <li class="flex items-start">
                                 <i class="fa-solid fa-check text-emerald-400 mt-0.5 mr-2.5"></i>
-                                <span>USDT/USDC native settlements. 0% loss to bank exchange rates.</span>
+                                <span>Invoice amount and mock payment status are recorded separately.</span>
                             </li>
                             <li class="flex items-start">
                                 <i class="fa-solid fa-check text-emerald-400 mt-0.5 mr-2.5"></i>
@@ -489,7 +489,7 @@
                             </li>
                             <li class="flex items-start">
                                 <i class="fa-solid fa-check text-emerald-400 mt-0.5 mr-2.5"></i>
-                                <span>No wallet connections or custom signups needed. Fast API tracking.</span>
+                                <span>Buyer links show the transaction terms and current payment status.</span>
                             </li>
                         </ul>
                     </div>
@@ -659,7 +659,7 @@
                 </div>
                 <h3 class="text-lg font-bold text-white">Funds Locked in Vault</h3>
                 <p class="text-sm text-gray-400 leading-relaxed">
-                    Buyer deposits target amount to Address A. The funds are tracked instantly and locked. Vendor sees the guarantee.
+                    The vendor funds 30% collateral first. The buyer then deposits the invoice amount plus separate 30% collateral to the escrow contract.
                 </p>
             </div>
 
@@ -753,7 +753,7 @@
                         <i class="fa-solid fa-gem"></i>
                     </div>
                     <h3 class="text-lg font-bold text-white">Mining & Precious Metals</h3>
-                    <p class="text-sm text-gray-400 leading-relaxed">Assayer purity reports, secure export credentials, chain-of-custody certificates, and export permit gating on-chain.</p>
+                    <p class="text-sm text-gray-400 leading-relaxed">Assayer purity reports, secure export credentials, chain-of-custody certificates, and export permit requirements.</p>
                 </div>
                 <span class="text-[10px] font-mono text-brand-500 uppercase tracking-wider block mt-6 pt-4 border-t border-brand-border/60">Multi-page assay report upload support</span>
             </div>
@@ -828,7 +828,7 @@
                         <i class="fa-solid fa-list-check"></i>
                     </div>
                     <h3 class="font-bold text-white text-base">Full Audit Trail</h3>
-                    <p class="text-xs text-gray-400 leading-relaxed">Every event—from collateral deposits to document validation uploads—is logged on-chain, creating an un-editable digital audit trail.</p>
+                    <p class="text-xs text-gray-400 leading-relaxed">Transaction changes and mock payment status are recorded in the application history.</p>
                 </div>
 
                 <!-- Box 4 -->
@@ -837,7 +837,7 @@
                         <i class="fa-solid fa-gavel"></i>
                     </div>
                     <h3 class="font-bold text-white text-base">Dispute Resolution</h3>
-                    <p class="text-xs text-gray-400 leading-relaxed">If friction arises, specialized on-chain dispute officers quickly evaluate evidence and arbitrate payouts in strict accordance with the terms.</p>
+                    <p class="text-xs text-gray-400 leading-relaxed">If friction arises, parties can record a dispute against the transaction for later review.</p>
                 </div>
 
                 <!-- Box 5 -->
@@ -889,12 +889,12 @@
             <!-- Q2 -->
             <div class="bg-brand-surface/40 border border-brand-border rounded-xl overflow-hidden transition-all duration-300">
                 <button class="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none" data-faq-toggle="true">
-                    <span class="font-bold text-white text-base">Do we need to connect our crypto wallets to perform a trade?</span>
+                    <span class="font-bold text-white text-base">How does payment work right now?</span>
                     <i class="fa-solid fa-chevron-down text-gray-400 transition-transform duration-300"></i>
                 </button>
                 <div class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
                     <div class="px-6 pb-5 text-sm text-gray-400 leading-relaxed border-t border-brand-border/40 pt-4">
-                        No! We deliberately built Escrow Sonet to bypass complex wallet connections. When you initiate a transaction, the platform generates dynamic, transaction-specific secure deposit addresses. You can manually copy the address and send your funds from any standard crypto wallet or exchange of your choice.
+                        Payment links currently use a mock provider for workflow testing only. No cryptocurrency, card, bank transfer, or other funds are collected or moved.
                     </div>
                 </div>
             </div>
@@ -902,12 +902,12 @@
             <!-- Q3 -->
             <div class="bg-brand-surface/40 border border-brand-border rounded-xl overflow-hidden transition-all duration-300">
                 <button class="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none" data-faq-toggle="true">
-                    <span class="font-bold text-white text-base">What are dynamic addresses (Address A & B)?</span>
+                    <span class="font-bold text-white text-base">What does the payment link contain?</span>
                     <i class="fa-solid fa-chevron-down text-gray-400 transition-transform duration-300"></i>
                 </button>
                 <div class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
                     <div class="px-6 pb-5 text-sm text-gray-400 leading-relaxed border-t border-brand-border/40 pt-4">
-                        For complete privacy and counterparty security, we generate two different tracking addresses for each transaction. The buyer deposits into Address A. The seller deposits their collateral into Address B. Because both deposits are isolated, neither party can view or trace the other’s personal wallet or account details.
+                        The link opens a buyer-safe view of the vendor, invoice, collateral, delivery terms, expected delivery date, and current mock payment status.
                     </div>
                 </div>
             </div>
@@ -976,7 +976,7 @@
                 Pioneering the Future of Sovereign Global Trade
             </h1>
             <p class="text-base sm:text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed">
-                We were founded on a single premise: to merge the stability and regulatory compliance of institutional banking with the speed, security, and friction-free architecture of blockchain. We are building the trust layer for the next generation of global commerce.
+                We are building clear transaction workflows for the next generation of global commerce, with payment provider integration planned as a separate phase.
             </p>
         </div>
     </section>
@@ -996,7 +996,7 @@
                         For decades, cross-border trade has been structurally broken. Businesses relying on traditional bank wires and Letters of Credit face a painful reality: week-long SWIFT delays, predatory 3-5% FX conversion fees, and the constant, looming threat of non-delivery or payment fraud. When a buyer in Brazil wants to trade with a seller in Japan, they operate in different legal, financial, and compliance worlds. This creates a paralyzing gridlock where neither party is willing to take the first risk.
                     </p>
                     <p>
-                        Escrow Sonet was founded by a team of trade finance veterans, security engineers, and UX designers who knew there had to be a better way. We architected a system from the ground up to solve this trilemma, using dynamic deposit tracking isolation (Address A & B) and dual-collateral game theory to create a system where honesty is not just a virtue—it's a mathematical certainty.
+                        Escrow Sonet is developing a smart-contract escrow flow with separately tracked invoice value and required buyer and vendor collateral.
                     </p>
                 </div>
             </div>
@@ -1017,7 +1017,7 @@
                     </div>
                     <h3 class="text-lg font-bold text-white">Sovereign Privacy</h3>
                     <p class="text-sm text-gray-400 leading-relaxed">
-                        We never compromise user security. Our system is built for frictionless communication via simple emails or social handles—no intrusive KYC, no wallet connections, and zero data mining. Your trade is your business.
+                        Payment processing is not enabled in this phase. The mock provider records workflow state only and never requests credentials or moves funds.
                     </p>
                 </div>
 
@@ -1151,7 +1151,7 @@
                 <div class="lg:col-span-5 space-y-4">
                     <div class="w-12 h-12 rounded-xl bg-brand-500/10 text-brand-500 flex items-center justify-center text-2xl"><i class="fa-solid fa-gem"></i></div>
                     <h2 class="text-3xl font-extrabold text-white tracking-tight">Strategic Minerals & Metals</h2>
-                    <p class="text-gray-400 leading-relaxed">Manage complex, multi-party transactions for raw and refined materials with absolute certainty through on-chain chain-of-custody tracking and purity validation.</p>
+                    <p class="text-gray-400 leading-relaxed">Manage complex, multi-party transactions for raw and refined materials with documented chain-of-custody tracking and purity validation.</p>
                     <ul class="space-y-3 text-sm pt-4">
                         <li class="flex items-center text-gray-300"><i class="fa-solid fa-check text-emerald-400 mr-3"></i> Independent Assayer Purity Reports</li>
                         <li class="flex items-center text-gray-300"><i class="fa-solid fa-check text-emerald-400 mr-3"></i> Verifiable Chain-of-Custody Logs</li>
@@ -1191,7 +1191,7 @@
                 Transparent Architecture. Zero Friction.
             </h1>
             <p class="text-base sm:text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed">
-                Our simple, flat-rate pricing is engineered exclusively for B2B and peer-to-peer cross-border trade, eliminating the hidden fees and predatory margins of traditional finance.
+                The transaction service records invoice value and each party's collateral separately. Payment provider integration will be defined in a later phase.
             </p>
         </div>
     </section>
@@ -1201,14 +1201,14 @@
         <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="bg-gradient-to-br from-brand-surface to-brand-surface/40 border border-brand-500/30 rounded-3xl p-8 md:p-12 text-center space-y-6 relative glow-effect">
                 <div class="absolute -top-8 left-1/2 -translate-x-1/2 w-32 h-16 bg-brand-dark flex items-center justify-center rounded-t-2xl border-t border-x border-brand-500/30">
-                    <p class="text-5xl font-black text-emerald-400 font-mono">1%</p>
+                    <p class="text-5xl font-black text-emerald-400 font-mono">30%</p>
                 </div>
-                <h2 class="text-3xl font-extrabold text-white tracking-tight pt-8">Flat Commission Fee</h2>
+                <h2 class="text-3xl font-extrabold text-white tracking-tight pt-8">Required Security Collateral</h2>
                 <p class="text-gray-400 leading-relaxed max-w-xl mx-auto">
-                    We charge a single, all-inclusive 1% fee per completed transaction. There are no setup costs, no monthly software subscriptions, and absolutely zero hidden FX conversion margins.
+                    Buyer and vendor each lock collateral equal to 30% of the agreed invoice amount. Collateral is held separately from the invoice value and is returned or allocated by the escrow contract's settlement rules.
                 </p>
                 <div class="bg-brand-dark/50 border border-brand-border rounded-xl p-4 text-xs text-emerald-400 font-semibold text-center">
-                    <i class="fa-solid fa-check-circle mr-2"></i> Fees are only processed upon successful release of escrowed assets. If a deal is mutually canceled, funds are returned intact.
+                    <i class="fa-solid fa-check-circle mr-2"></i> Mock mode does not charge a fee or move funds.
                 </div>
             </div>
         </div>
@@ -1218,21 +1218,21 @@
     <section class="py-20 md:py-28 bg-brand-surface/20 border-y border-brand-border">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-2xl mx-auto mb-16">
-                <h2 class="text-3xl font-extrabold text-white tracking-tight">Flexible Fee Structure</h2>
-                <p class="text-gray-400 mt-4">The 1% commission can be paid entirely by the buyer, entirely by the seller, or split 50/50, depending on the terms configured during the creation of Address A and Address B.</p>
+                <h2 class="text-3xl font-extrabold text-white tracking-tight">Separate Invoice &amp; Collateral</h2>
+                <p class="text-gray-400 mt-4">Payment provider fees are not part of this mock workflow. Invoice value and each party's 30% collateral are stored as separate transaction fields.</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center font-mono text-xs">
                 <div class="bg-brand-surface/40 border border-brand-border rounded-xl p-6 space-y-2">
                     <span class="text-brand-500 font-bold">Buyer Pays</span>
-                    <p class="text-gray-400">Buyer deposits trade value + 1% fee. Seller deposits only their collateral.</p>
+                    <p class="text-gray-400">Buyer deposits the invoice amount plus 30% buyer collateral.</p>
                 </div>
                 <div class="bg-brand-surface/40 border-2 border-brand-500/50 rounded-xl p-6 space-y-2">
                     <span class="text-emerald-400 font-bold">Split 50/50 (Default)</span>
-                    <p class="text-gray-400">Buyer deposits trade value + 0.5% fee. Seller's payout is trade value - 0.5% fee.</p>
+                    <p class="text-gray-400">Vendor deposits separate collateral equal to 30% of the invoice.</p>
                 </div>
                 <div class="bg-brand-surface/40 border border-brand-border rounded-xl p-6 space-y-2">
                     <span class="text-brand-500 font-bold">Seller Pays</span>
-                    <p class="text-gray-400">Buyer deposits only the trade value. Seller's final payout is trade value - 1% fee.</p>
+                    <p class="text-gray-400">The contract returns or allocates collateral under the recorded settlement or dispute outcome.</p>
                 </div>
             </div>
         </div>
@@ -1253,19 +1253,19 @@
                     </button>
                     <div class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
                         <div class="px-6 pb-5 text-sm text-gray-400 leading-relaxed border-t border-brand-border/40 pt-4">
-                            Network gas fees are a native cost of using a blockchain (e.g., Polygon, BSC, Solana) and are paid by each party when they execute their respective transfers to Address A and Address B. These are external to our 1% commission and are typically very low on our supported networks.
+                            No network gas is charged in mock mode. A future payment provider will define its own fees separately from invoice value and collateral.
                         </div>
                     </div>
                 </div>
                 <!-- Q2 -->
                 <div class="bg-brand-surface/40 border border-brand-border rounded-xl overflow-hidden transition-all duration-300">
                     <button class="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none" data-faq-toggle="true">
-                        <span class="font-bold text-white text-base">What happens to the 1% fee if a transaction enters arbitration?</span>
+                        <span class="font-bold text-white text-base">Does the initial escrow contract charge a platform fee?</span>
                         <i class="fa-solid fa-chevron-down text-gray-400 transition-transform duration-300"></i>
                     </button>
                     <div class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
                         <div class="px-6 pb-5 text-sm text-gray-400 leading-relaxed border-t border-brand-border/40 pt-4">
-                            The 1% fee remains securely locked in the escrow vault alongside the principal amount during active mediation. The winning party of the dispute receives their full payout, and the fee is processed normally upon the final, arbitrated resolution.
+                            No platform fee is encoded in this initial contract. The invoice amount and both collateral deposits are held by the contract; network gas is paid separately by transaction senders.
                         </div>
                     </div>
                 </div>
@@ -1302,16 +1302,16 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
         <div class="bg-slate-900/50 border border-slate-800 p-8 rounded-2xl backdrop-blur-sm">
           <div class="text-emerald-400 font-bold mb-2">STAGE 1: THE BUYER DEPOSIT</div>
-          <h3 class="text-xl font-bold text-white mb-4">Escrow Deposit Address A</h3>
+          <h3 class="text-xl font-bold text-white mb-4">Buyer Contract Deposit</h3>
           <p class="text-gray-400 leading-relaxed">
-            The buyer deposits the full <strong>Trade Amount + a designated safety collateral percentage (e.g., 10%)</strong> into a unique tracking address. This proves financial commitment and secures the funds upfront, visible immediately to the seller.
+            The buyer deposits the <strong>invoice amount plus separate collateral of 30%</strong> into the escrow contract. The invoice amount and collateral are accounted for independently.
           </p>
         </div>
         <div class="bg-slate-900/50 border border-slate-800 p-8 rounded-2xl backdrop-blur-sm">
           <div class="text-blue-400 font-bold mb-2">STAGE 2: THE SELLER DEPOSIT</div>
-          <h3 class="text-xl font-bold text-white mb-4">Escrow Deposit Address B</h3>
+          <h3 class="text-xl font-bold text-white mb-4">Vendor Contract Collateral</h3>
           <p class="text-gray-400 leading-relaxed">
-            The seller deposits a <strong>matching safety collateral percentage (10%)</strong> into a completely separate address. Because neither party ever sees the other's personal wallet address, complete financial privacy is preserved.
+            The vendor's <strong>collateral value is recorded as 30% of the invoice amount</strong>. It is kept separate from invoice value; this mock phase does not collect either amount.
           </p>
         </div>
       </div>
@@ -1517,7 +1517,7 @@
                     <span class="text-white font-black text-xl tracking-tight">escrow<span class="text-brand-500">sonet</span></span>
                 </div>
                 <p class="text-xs text-gray-500 leading-relaxed">
-                    Escrow Sonet replaces complex, high-fee bank Letters of Credit with managed, blockchain-verified milestone vaults. Fully secure global trade from purchase order to final customs delivery.
+                    Escrow Sonet organizes cross-border transaction terms and buyer payment links. Payment processing is currently mock-only.
                 </p>
                 <div class="flex items-center space-x-3 text-xs text-gray-500 font-mono">
                     <i class="fa-solid fa-earth-americas text-brand-500 text-sm"></i>
@@ -1541,7 +1541,7 @@
                     <ul class="space-y-2.5 text-xs text-gray-500 font-medium">
                         <li><a href="#" class="hover:text-white transition-colors js-policy-alert" data-alert-message="Privacy Policy acts under global data sovereignty rights.">Privacy Policy</a></li>
                         <li><a href="#" class="hover:text-white transition-colors js-policy-alert" data-alert-message="Cookie Policy: We do not track personal identifying logs.">Cookie Policy</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors js-policy-alert" data-alert-message="Data Rights: Your wallet and data can be requested for deletion at any point.">Data Rights</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors js-policy-alert" data-alert-message="Data Rights: Transaction data can be requested for deletion under the applicable policy.">Data Rights</a></li>
                         <li><a href="#" class="hover:text-white transition-colors js-policy-alert" data-alert-message="Dispute Rules: All cases mediated according to pre-signed milestone terms.">Dispute Rights</a></li>
                     </ul>
                 </div>
@@ -1593,56 +1593,60 @@
         </button>
 
         <h3 class="text-xl font-bold text-white mb-2">Create Global Trade Order</h3>
-        <p class="text-xs text-gray-400 mb-6">Set your cross-border escrow parameters. No wallet connection needed; we will generate dedicated tracking deposit addresses.</p>
+        <p class="text-xs text-gray-400 mb-6">Create an escrow transaction and a private payment link for your buyer. Payment processing is currently a mock placeholder.</p>
 
         <!-- Form fields -->
         <form id="create-order-form" class="space-y-4">
             <!-- Contact Info -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-1.5">Your Email / Telegram</label>
-                    <input type="text" required placeholder="e.g., mail@importer.com" class="w-full bg-brand-dark border border-brand-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                    <label class="block text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-1.5">Vendor / Business Name</label>
+                    <input id="form-vendor-name" type="text" required placeholder="Registered vendor name" class="w-full bg-brand-dark border border-brand-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-1.5">Counterparty Contact</label>
-                    <input type="text" required placeholder="e.g., @exporter_sk" class="w-full bg-brand-dark border border-brand-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                    <label class="block text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-1.5">Buyer Name</label>
+                    <input id="form-buyer-name" type="text" required placeholder="Buyer or business name" class="w-full bg-brand-dark border border-brand-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-1.5">Buyer Email / Contact</label>
+                    <input id="form-buyer-contact" type="text" required placeholder="buyer@example.com or phone number" class="w-full bg-brand-dark border border-brand-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
                 </div>
             </div>
 
             <!-- Trade Details -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div class="sm:col-span-2">
-                    <label class="block text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-1.5">Choose Settlement Crypto</label>
-                    <select class="w-full bg-brand-dark border border-brand-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
-                        <option value="USDT">USDT (Polygon Network - Low Fee)</option>
-                        <option value="USDC">USDC (Solana Network)</option>
-                        <option value="BUSD">BUSD (BSC Chain)</option>
+                    <label class="block text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-1.5">Invoice Currency</label>
+                    <select id="form-currency" class="w-full bg-brand-dark border border-brand-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500">
+                        <option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option><option value="CAD">CAD</option><option value="AUD">AUD</option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-1.5">Deal Value ($)</label>
-                    <input type="number" id="form-deal-val" required value="5000" class="w-full bg-brand-dark border border-brand-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500 font-mono">
+                    <input type="number" id="form-deal-val" required min="0.01" step="0.01" value="5000" class="w-full bg-brand-dark border border-brand-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500 font-mono">
                 </div>
             </div>
 
             <!-- Collaterals fields -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-1.5">Seller Collateral ($)</label>
-                    <input type="number" id="form-seller-col" required value="750" class="w-full bg-brand-dark border border-brand-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500 font-mono">
-                    <span class="text-[9px] text-gray-500 font-mono mt-1 block">Default recommended: 15%</span>
+                    <label class="block text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-1.5">Buyer Collateral (30%)</label>
+                    <p id="form-buyer-col" class="w-full rounded-xl border border-brand-border bg-brand-dark px-4 py-2.5 font-mono text-white">$1,500.00 USD</p>
                 </div>
                 <div>
-                    <label class="block text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-1.5">Your Payout Address</label>
-                    <input type="text" required placeholder="0x..." class="w-full bg-brand-dark border border-brand-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500 font-mono">
-                    <span class="text-[9px] text-gray-500 font-mono mt-1 block">Where collateral resolves back</span>
+                    <label class="block text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-1.5">Vendor Collateral (30%)</label>
+                    <p id="form-seller-col" class="w-full rounded-xl border border-brand-border bg-brand-dark px-4 py-2.5 font-mono text-white">$1,500.00 USD</p>
                 </div>
             </div>
 
             <!-- Description -->
             <div>
                 <label class="block text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-1.5">Brief Deal Description / Document Requirements</label>
-                <textarea rows="2" placeholder="e.g., Bulk agricultural cargo delivery. SGS certificate and clean Bill of Lading required before final funds release." class="w-full bg-brand-dark border border-brand-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500"></textarea>
+                <textarea id="form-deal-desc" rows="2" required placeholder="Briefly describe the goods or services and delivery terms." class="w-full bg-brand-dark border border-brand-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500"></textarea>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div><label class="block text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-1.5">Delivery Terms</label><input id="form-delivery-terms" type="text" required placeholder="e.g. FCA Hamburg; buyer arranges freight" class="w-full bg-brand-dark border border-brand-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500"></div>
+                <div><label class="block text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-1.5">Expected Delivery Date</label><input id="form-delivery-date" type="date" required class="w-full bg-brand-dark border border-brand-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-brand-500"></div>
             </div>
 
             <!-- Checkbox Terms -->
@@ -1659,6 +1663,9 @@
                     Generate My Escrow Links
                 </button>
             </div>
+            <p id="public-create-result" class="hidden break-words text-sm text-emerald-300" role="status" aria-live="polite"></p>
+            <a id="public-create-link" class="hidden break-all text-sm text-emerald-300 underline" target="_blank" rel="noreferrer"></a>
+            <div id="public-link-actions" class="hidden flex flex-wrap gap-3"><button id="public-copy-link" type="button" class="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-200">Copy Link</button><a id="public-open-link" class="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-200" target="_blank" rel="noreferrer">Open Link</a><button id="public-share-link" type="button" class="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-200">Share</button></div>
         </form>
     </div>
 </div>
@@ -1671,13 +1678,13 @@
         </button>
 
         <h3 class="text-xl font-bold text-white mb-2">Track Active Escrow</h3>
-        <p class="text-xs text-gray-400 mb-6">Enter your unique Deal ID or either of your assigned tracking address IDs.</p>
+        <p class="text-xs text-gray-400 mb-6">Enter the numeric escrow ID from the payment link to load confirmed contract state.</p>
 
         <!-- Form fields -->
         <form id="track-order-form" class="space-y-4">
             <div>
                 <label class="block text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-1.5">Transaction or Deal ID</label>
-                <input type="text" required placeholder="e.g., ES-2026-X99" class="w-full bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-500 font-mono uppercase">
+                <input type="text" required inputmode="numeric" placeholder="e.g., 1" class="w-full bg-brand-dark border border-brand-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-500 font-mono">
             </div>
             <div>
                 <label class="block text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-1.5">Your Payout Address (Optional)</label>
@@ -1690,11 +1697,13 @@
                     Load Escrow Portal <i class="fa-solid fa-circle-notch fa-spin ml-1.5 hidden" id="track-spinner"></i>
                 </button>
             </div>
+            <p id="track-order-result" class="hidden break-words text-sm text-slate-300" role="status" aria-live="polite"></p>
         </form>
     </div>
 </div>
 
 <!-- CORE PORTAL JAVASCRIPT LOGIC -->
+<script src="js/transactions.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

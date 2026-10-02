@@ -1,0 +1,12 @@
+{
+  "name": "escrow-sonet",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server/start.js",
+    "test": "node --test server/test/*.test.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}

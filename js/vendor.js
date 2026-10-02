@@ -463,9 +463,11 @@ document.addEventListener('DOMContentLoaded', function () {
     var summarySubtotal = document.getElementById('summary-subtotal');
     var summaryNet = document.getElementById('summary-net');
     var summaryEscrowLock = document.getElementById('summary-escrow-lock');
+    var collateralBps = 3000;
 
     function formatFinancialUSD(amount) {
-      return 'USD ' + amount.toFixed(2);
+      var currency = document.getElementById('transaction-currency')?.value || 'USD';
+      return new Intl.NumberFormat(undefined, { style: 'currency', currency: currency }).format(amount);
     }
 
     function updateFinancialSummary() {
@@ -483,10 +485,18 @@ document.addEventListener('DOMContentLoaded', function () {
       var net = Math.max(0, subtotal - discount + (document.getElementById('toggle-freight')?.checked ? freight : 0));
       var retention = document.getElementById('toggle-retention')?.checked ? net * retentionRate / 100 : 0;
       var escrowLock = Math.max(0, net - (document.getElementById('toggle-deposit')?.checked ? deposit : 0) - retention);
+      var buyerCollateral = net * collateralBps / 10000;
+      var sellerCollateral = buyerCollateral;
       if (document.getElementById('toggle-round-usd')?.checked) escrowLock = Math.round(escrowLock);
       if (summarySubtotal) summarySubtotal.textContent = formatFinancialUSD(subtotal);
       if (summaryNet) summaryNet.textContent = formatFinancialUSD(net);
       if (summaryEscrowLock) summaryEscrowLock.textContent = formatFinancialUSD(escrowLock);
+      var buyerCollateralOutput = document.getElementById('summary-buyer-collateral');
+      var sellerCollateralOutput = document.getElementById('summary-seller-collateral');
+      var buyerTotalOutput = document.getElementById('summary-buyer-total');
+      if (buyerCollateralOutput) buyerCollateralOutput.textContent = formatFinancialUSD(buyerCollateral);
+      if (sellerCollateralOutput) sellerCollateralOutput.textContent = formatFinancialUSD(sellerCollateral);
+      if (buyerTotalOutput) buyerTotalOutput.textContent = formatFinancialUSD(net + buyerCollateral);
     }
 
     function updateConsignmentTotal(card) {
@@ -535,6 +545,8 @@ document.addEventListener('DOMContentLoaded', function () {
         updateConsignmentTotal(newCard);
       });
     }
+
+    document.getElementById('transaction-currency')?.addEventListener('change', updateFinancialSummary);
   }
 
   /* ── Direct Links: taxes and duties selection ── */
@@ -608,16 +620,25 @@ document.addEventListener('DOMContentLoaded', function () {
   var directLinkValidationFields = [
     document.getElementById('seller-legal-name'),
     document.getElementById('seller-street-address'),
-    document.getElementById('seller-city')
+    document.getElementById('seller-city'),
+    document.getElementById('transaction-buyer-name'),
+    document.getElementById('transaction-buyer-contact'),
+    document.getElementById('transaction-delivery-terms'),
+    document.getElementById('transaction-expected-delivery')
   ];
 
   function getInvalidDirectLinkFields() {
     var invalidFields = [];
-    var firstConsignment = document.querySelector('.consignment-card');
-    var description = firstConsignment?.querySelector('.consignment-description');
-    var price = firstConsignment?.querySelector('.consignment-price');
-    if (description && !description.value.trim()) invalidFields.push(description);
-    if (price && (!(parseFloat(price.value) > 0))) invalidFields.push(price);
+    var invoiceAmount = parseFloat(summaryNet?.textContent.replace(/[^0-9.]/g, '') || '0');
+    if (!(invoiceAmount > 0)) invalidFields.push(document.querySelector('.consignment-price'));
+    document.querySelectorAll('.consignment-card').forEach(function (card) {
+      var description = card.querySelector('.consignment-description');
+      var quantity = card.querySelector('.consignment-quantity');
+      var price = card.querySelector('.consignment-price');
+      if (description && !description.value.trim()) invalidFields.push(description);
+      if (quantity && !(parseFloat(quantity.value) > 0)) invalidFields.push(quantity);
+      if (price && !(parseFloat(price.value) > 0)) invalidFields.push(price);
+    });
     directLinkValidationFields.forEach(function (field) {
       if (field && !field.value.trim()) invalidFields.push(field);
     });
@@ -654,17 +675,380 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('#direct-links-view .settings-input').forEach(function (field) {
     field.addEventListener('input', validateDirectLinkForm);
   });
-  if (generatePaymentLinkBtn) {
+  function setDemoSelectOption(select, value, label) {
+    if (!select) return;
+    var hasOption = Array.from(select.options).some(function (option) { return option.value === value || option.textContent.trim() === label; });
+    if (!hasOption) {
+      var option = document.createElement('option');
+      option.value = value;
+      option.textContent = label;
+      select.appendChild(option);
+    }
+    select.value = value;
+  }
+
+  function triggerBuyerType(type) {
+    var pills = document.querySelectorAll('.direct-link-party-pill');
+    var target = Array.from(pills).find(function (pill) { return pill.getAttribute('data-party-type') === type; });
+    if (!target) return;
+    target.click();
+  }
+
+  function populateDemoData() {
+    var sellerName = document.getElementById('seller-legal-name');
+    if (sellerName) sellerName.value = 'Acme Global Trading Pvt. Ltd.';
+
+    var sellerStreet = document.querySelector('#seller-street-address');
+    if (sellerStreet) sellerStreet.value = '123 Business Park';
+
+    var sellerCity = document.getElementById('seller-city');
+    if (sellerCity) sellerCity.value = 'Pune';
+
+    var sellerCountry = document.querySelector('select[aria-label="Seller country"]');
+    if (sellerCountry) setDemoSelectOption(sellerCountry, 'IN', 'IN — India');
+
+    var sellerEmailFields = document.querySelectorAll('input[type="email"][placeholder="Email (optional)"]');
+    if (sellerEmailFields.length) sellerEmailFields[0].value = 'vendor@demo.test';
+
+    triggerBuyerType('business');
+
+    var buyerName = document.getElementById('transaction-buyer-name');
+    if (buyerName) buyerName.value = 'John Smith';
+
+    var buyerContact = document.getElementById('transaction-buyer-contact');
+    if (buyerContact) buyerContact.value = 'buyer@demo.test';
+
+    var buyerCountry = document.querySelector('select[aria-label="Buyer country"]');
+    if (buyerCountry) setDemoSelectOption(buyerCountry, 'US', 'US — United States');
+
+    var buyerStreet = Array.from(document.querySelectorAll('input[placeholder="Street address"]')).filter(function (input) { return input.closest('section') && input.closest('section').textContent.includes('BUYER'); })[0];
+    if (buyerStreet) buyerStreet.value = '10 Market Street';
+
+    var buyerCity = Array.from(document.querySelectorAll('input[placeholder="City / Town"]')).filter(function (input) { return input.closest('section') && input.closest('section').textContent.includes('BUYER'); })[0];
+    if (buyerCity) buyerCity.value = 'New York';
+
+    var deliveryTime = document.querySelector('[aria-label="Delivery time"]');
+    if (deliveryTime) deliveryTime.value = '30';
+
+    var deliveryUnit = document.querySelector('[aria-label="Delivery time unit"]');
+    if (deliveryUnit) deliveryUnit.value = 'business days';
+
+    var expectedDate = document.getElementById('transaction-expected-delivery');
+    if (expectedDate) {
+      var futureDate = new Date();
+      futureDate.setDate(futureDate.getDate() + 30);
+      expectedDate.value = futureDate.toISOString().slice(0, 10);
+    }
+
+    var deliveryTermsInput = document.getElementById('transaction-delivery-terms');
+    if (deliveryTermsInput) deliveryTermsInput.value = 'CIF';
+
+    var incotermSelect = document.getElementById('direct-link-incoterm-select');
+    if (incotermSelect) {
+      setDemoSelectOption(incotermSelect, 'CIF', 'CIF — Cost, Insurance & Freight');
+    }
+
+    var consignment = document.querySelector('.consignment-card');
+    if (consignment) {
+      var description = consignment.querySelector('.consignment-description');
+      if (description) description.value = 'Industrial equipment supply';
+      var quantity = consignment.querySelector('.consignment-quantity');
+      if (quantity) quantity.value = '1';
+      var price = consignment.querySelector('.consignment-price');
+      if (price) price.value = '10000';
+      updateConsignmentTotal(consignment);
+    }
+
+    var currency = document.getElementById('transaction-currency');
+    if (currency) currency.value = 'USD';
+    updateFinancialSummary();
+    validateDirectLinkForm();
+  }
+
+  function buildDirectEscrowPayload() {
+    var metadataDescription = Array.from(document.querySelectorAll('.consignment-description'))
+      .map(function (field) { return field.value.trim(); }).filter(Boolean).join('\n');
+    var invoiceAmount = summaryNet?.textContent.replace(/[^0-9.]/g, '') || '0';
+    var deliveryDays = document.querySelector('[aria-label="Delivery time"]')?.value || '14';
+    var deliveryUnit = document.querySelector('[aria-label="Delivery time unit"]')?.value || 'business days';
+    var incoterm = document.getElementById('direct-link-incoterm-select')?.value || '';
+    var deliveryDescription = document.getElementById('transaction-delivery-terms')?.value.trim() || '';
+    var deliveryTerms = [incoterm, deliveryDays + ' ' + deliveryUnit, deliveryDescription].filter(Boolean).join(' · ');
+    var currency = document.getElementById('transaction-currency')?.value || 'USD';
+    return {
+      vendorName: document.getElementById('seller-legal-name')?.value.trim(),
+      buyerName: document.getElementById('transaction-buyer-name')?.value.trim(),
+      buyerContact: document.getElementById('transaction-buyer-contact')?.value.trim(),
+      invoiceAmount: invoiceAmount,
+      currency: currency,
+      description: metadataDescription,
+      deliveryTerms: deliveryTerms,
+      expectedDeliveryDate: document.getElementById('transaction-expected-delivery')?.value
+    };
+  }
+
+  function createDirectEscrowRequest(button) {
+    var invalidFields = validateDirectLinkForm();
+    var status = document.getElementById('direct-link-escrow-status');
+    if (invalidFields[0]) {
+      invalidFields[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      invalidFields[0].focus();
+      return;
+    }
+
+    if (!window.EscrowTransactions) {
+      if (status) status.textContent = 'The transaction service is unavailable. Refresh and retry.';
+      return;
+    }
+
+    var resultPanel = document.getElementById('direct-link-created-result');
+    var shareButton = document.getElementById('share-direct-link-btn');
+    if (button) {
+      button.disabled = true;
+      button.textContent = 'Creating Escrow…';
+    }
+    if (status) status.textContent = 'Saving transaction and generating its private buyer link…';
+
+    var payload = buildDirectEscrowPayload();
+
+    window.EscrowTransactions.create(payload).then(function (created) {
+      if (resultPanel) resultPanel.classList.remove('hidden');
+      document.getElementById('direct-link-created-id').textContent = created.escrowId;
+      document.getElementById('direct-link-created-state').textContent = created.status;
+      document.getElementById('direct-link-created-url').value = created.paymentLink || '';
+      document.getElementById('open-direct-link-btn').href = created.paymentLink || '#';
+      document.getElementById('open-direct-link-btn').classList.toggle('pointer-events-none', !created.paymentLink);
+      document.getElementById('direct-link-created-funding').textContent = 'Invoice ' + created.invoiceAmount + ' ' + created.currency + ' · Buyer collateral ' + created.buyerCollateral + ' ' + created.currency + ' · Buyer total due ' + created.totalRequiredFromBuyer + ' ' + created.currency + ' · Seller collateral ' + created.sellerCollateral + ' ' + created.currency + ' · Payment: ' + created.paymentStatus + ' (MOCK)';
+      if (status) {
+        status.textContent = created.paymentLink
+          ? 'Escrow created. Seller collateral is already secured, so the buyer payment link is ready.'
+          : 'Escrow created. Buyer payment link stays hidden until the seller deposits the required 30% collateral.';
+      }
+      if (button) button.textContent = 'Escrow Created';
+      refreshVendorTransactions();
+      if (shareButton && navigator.share) shareButton.dataset.shareUrl = created.paymentLink || '';
+    }).catch(function (error) {
+      if (status) status.textContent = error.message || 'Escrow could not be created.';
+      if (button) button.textContent = button.id === 'create-demo-escrow-btn' ? 'Create Demo Escrow' : 'Create Escrow & Payment Link';
+    }).finally(function () {
+      if (button) button.disabled = false;
+      validateDirectLinkForm();
+    });
+  }
+
+  var fillDemoDataBtn = document.getElementById('fill-demo-data-btn');
+  if (fillDemoDataBtn) {
+    fillDemoDataBtn.addEventListener('click', function () {
+      populateDemoData();
+      var status = document.getElementById('direct-link-escrow-status');
+      if (status) status.textContent = 'Demo data loaded. Review the values and create the mock escrow.';
+    });
+  }
+
+  var createDemoEscrowBtn = document.getElementById('create-demo-escrow-btn');
+  if (createDemoEscrowBtn) {
+    createDemoEscrowBtn.addEventListener('click', function () {
+      populateDemoData();
+      createDirectEscrowRequest(createDemoEscrowBtn);
+    });
+  }
+
+  if (generatePaymentLinkBtn && document.body.dataset.dashboardRole !== 'buyer') {
     generatePaymentLinkBtn.addEventListener('click', function () {
-      var invalidFields = validateDirectLinkForm();
-      if (invalidFields[0]) {
-        invalidFields[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
-        invalidFields[0].focus();
-      } else {
-        generatePaymentLinkBtn.textContent = 'Payment Link Generated';
+      createDirectEscrowRequest(generatePaymentLinkBtn);
+    });
+  }
+
+  var copyDirectLinkBtn = document.getElementById('copy-direct-link-btn');
+  if (copyDirectLinkBtn) {
+    copyDirectLinkBtn.addEventListener('click', function () {
+      var paymentUrl = document.getElementById('direct-link-created-url')?.value;
+      if (paymentUrl) navigator.clipboard.writeText(paymentUrl).then(function () {
+        copyDirectLinkBtn.textContent = 'Copied';
+      });
+    });
+  }
+
+  var shareDirectLinkBtn = document.getElementById('share-direct-link-btn');
+  if (shareDirectLinkBtn) {
+    shareDirectLinkBtn.addEventListener('click', async function () {
+      var paymentUrl = document.getElementById('direct-link-created-url')?.value;
+      if (!paymentUrl) return;
+      try {
+        if (navigator.share) await navigator.share({ title: 'Escrow Sonet transaction', url: paymentUrl });
+        else {
+          await navigator.clipboard.writeText(paymentUrl);
+          shareDirectLinkBtn.textContent = 'Copied';
+        }
+      } catch (error) {
+        if (error.name !== 'AbortError') document.getElementById('direct-link-escrow-status').textContent = 'Payment link is ready to copy from the field above.';
       }
     });
   }
+
+  var vendorTransactionStatus = document.getElementById('vendor-transaction-status');
+  var vendorTransactionCount = document.getElementById('vendor-transaction-count');
+  var vendorTransactionFeed = document.getElementById('vendor-transaction-feed');
+  var directLinkTransactionList = document.getElementById('direct-link-transaction-list');
+
+  function formatTransactionMoney(amount, currency) {
+    return new Intl.NumberFormat(undefined, { style: 'currency', currency: currency, minimumFractionDigits: 2 }).format(Number(amount));
+  }
+
+  function makeTextElement(tagName, className, text) {
+    var element = document.createElement(tagName);
+    element.className = className;
+    element.textContent = text;
+    return element;
+  }
+
+  function renderVendorTransactionList(container, transactions) {
+    if (!container) return;
+    container.replaceChildren();
+    if (!transactions.length) {
+      container.appendChild(makeTextElement('p', 'rounded-lg border border-slate-800/60 p-4 text-sm text-slate-400', 'No transactions created in this browser session yet.'));
+      return;
+    }
+    transactions.forEach(function (transaction) {
+      var card = document.createElement('article');
+      card.className = 'space-y-3 rounded-xl border border-slate-800/70 bg-slate-950/40 p-4';
+      var heading = document.createElement('div');
+      heading.className = 'flex flex-wrap items-center justify-between gap-3';
+      heading.appendChild(makeTextElement('h3', 'font-mono text-sm font-bold text-white', transaction.escrowId));
+      heading.appendChild(makeTextElement('span', 'rounded-md border border-emerald-500/30 px-2.5 py-1 text-xs font-semibold text-emerald-200', transaction.status));
+      card.appendChild(heading);
+      card.appendChild(makeTextElement('p', 'text-sm text-slate-300', transaction.buyer.name + ' · ' + transaction.buyer.contact));
+      card.appendChild(makeTextElement('p', 'text-sm text-slate-300', 'Invoice ' + formatTransactionMoney(transaction.invoiceAmount, transaction.currency) + ' · Buyer collateral ' + formatTransactionMoney(transaction.buyerCollateral, transaction.currency) + ' · Buyer total due ' + formatTransactionMoney(transaction.totalRequiredFromBuyer, transaction.currency) + ' · Seller collateral ' + formatTransactionMoney(transaction.sellerCollateral, transaction.currency)));
+      card.appendChild(makeTextElement('p', 'text-xs text-amber-200', 'Payment status: ' + transaction.paymentStatus + ' · MOCK only'));
+      var linkRow = document.createElement('div');
+      linkRow.className = 'flex flex-wrap items-center gap-3';
+      var openLink = document.createElement('a');
+      openLink.href = transaction.paymentLink || '#';
+      openLink.target = '_blank';
+      openLink.rel = 'noreferrer';
+      openLink.className = 'break-all text-sm text-emerald-300 underline';
+      openLink.textContent = transaction.paymentLink || 'Seller collateral required before buyer link is shown';
+      openLink.classList.toggle('pointer-events-none', !transaction.paymentLink);
+      linkRow.appendChild(openLink);
+      if (transaction.paymentLink) {
+        var copy = document.createElement('button');
+        copy.type = 'button';
+        copy.className = 'rounded-lg border border-slate-700 px-3 py-2 text-xs text-slate-200 hover:border-emerald-400';
+        copy.textContent = 'Copy link';
+        copy.addEventListener('click', async function () {
+          await navigator.clipboard.writeText(transaction.paymentLink);
+          copy.textContent = 'Copied';
+        });
+        linkRow.appendChild(copy);
+      }
+      card.appendChild(linkRow);
+      if (!transaction.paymentLink && ['CREATED', 'SELLER_COLLATERAL_PENDING'].includes(transaction.status)) {
+        var depositCollateral = document.createElement('button');
+        depositCollateral.type = 'button';
+        depositCollateral.className = 'rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-500';
+        depositCollateral.textContent = 'Deposit Seller Collateral';
+        depositCollateral.addEventListener('click', async function () {
+          try {
+            depositCollateral.disabled = true;
+            depositCollateral.textContent = 'Depositing…';
+            await window.EscrowTransactions.depositSellerCollateral(transaction.escrowId);
+            await refreshVendorTransactions();
+          } catch (error) {
+            depositCollateral.disabled = false;
+            depositCollateral.textContent = 'Deposit Seller Collateral';
+            if (vendorTransactionStatus) vendorTransactionStatus.textContent = error.message || 'Seller collateral could not be deposited.';
+          }
+        });
+        card.appendChild(depositCollateral);
+      }
+      if (transaction.status === 'BUYER_FUNDED') {
+        var activate = document.createElement('button');
+        activate.type = 'button';
+        activate.className = 'rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-500';
+        activate.textContent = 'Activate transaction';
+        activate.addEventListener('click', function () { updateVendorTransaction(transaction.escrowId, 'ACTIVE'); });
+        card.appendChild(activate);
+      }
+      if (transaction.status === 'CREATED' || transaction.status === 'SELLER_COLLATERAL_PENDING' || transaction.status === 'BUYER_PAYMENT_PENDING') {
+        var cancel = document.createElement('button');
+        cancel.type = 'button';
+        cancel.className = 'rounded-lg border border-slate-700 px-3 py-2 text-sm text-slate-200 hover:border-rose-400';
+        cancel.textContent = 'Cancel transaction';
+        cancel.addEventListener('click', function () { updateVendorTransaction(transaction.escrowId, 'CANCELLED'); });
+        card.appendChild(cancel);
+      }
+      if (transaction.status === 'ACTIVE') {
+        var delivered = document.createElement('button');
+        delivered.type = 'button';
+        delivered.className = 'rounded-lg bg-emerald-600 px-3 py-2 text-sm font-semibold text-white hover:bg-emerald-500';
+        delivered.textContent = 'Mark delivered';
+        delivered.addEventListener('click', function () { updateVendorTransaction(transaction.escrowId, 'DELIVERED'); });
+        card.appendChild(delivered);
+      }
+      if (transaction.status === 'ACTIVE' || transaction.status === 'DELIVERED') {
+        var dispute = document.createElement('button');
+        dispute.type = 'button';
+        dispute.className = 'rounded-lg border border-rose-500/40 px-3 py-2 text-sm text-rose-200 hover:bg-rose-950/30';
+        dispute.textContent = 'Raise a dispute';
+        dispute.addEventListener('click', function () {
+          var reason = window.prompt('Briefly describe the dispute:');
+          if (reason && reason.trim()) updateVendorTransaction(transaction.escrowId, 'DISPUTED', reason.trim());
+        });
+        card.appendChild(dispute);
+      }
+      if (transaction.paymentStatus === 'MOCK_CONFIRMED' && ['ACTIVE', 'DELIVERED', 'DISPUTED'].includes(transaction.status)) {
+        var refund = document.createElement('button');
+        refund.type = 'button';
+        refund.className = 'ml-2 rounded-lg border border-rose-500/40 px-3 py-2 text-sm text-rose-200 hover:bg-rose-950/30';
+        refund.textContent = 'Record mock refund';
+        refund.addEventListener('click', function () { refundVendorTransaction(transaction.escrowId); });
+        card.appendChild(refund);
+      }
+      container.appendChild(card);
+    });
+  }
+
+  async function refreshVendorTransactions() {
+    if (!window.EscrowTransactions) return;
+    if (vendorTransactionStatus) vendorTransactionStatus.textContent = 'Loading saved transactions…';
+    try {
+      var transactions = await window.EscrowTransactions.listVendor();
+      if (vendorTransactionCount) vendorTransactionCount.textContent = transactions.length + ' transaction' + (transactions.length === 1 ? '' : 's');
+      renderVendorTransactionList(vendorTransactionFeed, transactions);
+      renderVendorTransactionList(directLinkTransactionList, transactions);
+      if (vendorTransactionStatus) vendorTransactionStatus.textContent = 'Payment provider: MOCK · no funds move.';
+    } catch (error) {
+      if (vendorTransactionStatus) vendorTransactionStatus.textContent = error.message || 'Transactions could not be loaded.';
+    }
+  }
+
+  async function updateVendorTransaction(escrowId, status, reason) {
+    try {
+      await window.EscrowTransactions.setVendorStatus(escrowId, status, reason);
+      await refreshVendorTransactions();
+    } catch (error) {
+      if (vendorTransactionStatus) vendorTransactionStatus.textContent = error.message || 'Transaction status could not be updated.';
+    }
+  }
+
+  async function refundVendorTransaction(escrowId) {
+    try {
+      await window.EscrowTransactions.refundVendorTransaction(escrowId);
+      await refreshVendorTransactions();
+    } catch (error) {
+      if (vendorTransactionStatus) vendorTransactionStatus.textContent = error.message || 'Mock refund could not be recorded.';
+    }
+  }
+
+  function refreshDirectLinkTransactionList() {
+    if (window.EscrowTransactions) refreshVendorTransactions();
+  }
+
+  var refreshVendorLinksButton = document.getElementById('refresh-vendor-links');
+  var refreshVendorTransactionsButton = document.getElementById('vendor-refresh-transactions');
+  if (refreshVendorLinksButton) refreshVendorLinksButton.addEventListener('click', refreshDirectLinkTransactionList);
+  if (refreshVendorTransactionsButton) refreshVendorTransactionsButton.addEventListener('click', refreshVendorTransactions);
+  if (document.body.dataset.dashboardRole !== 'buyer') refreshVendorTransactions();
   validateDirectLinkForm();
 
   /* ── Quote Hub sub-tab toggle: switch between Quote Requests & Milestone Agreements ── */
